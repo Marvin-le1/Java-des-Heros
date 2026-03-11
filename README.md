@@ -6,8 +6,7 @@ missions, incidents et super-héros.
 
 ## Prérequis
 - Java 25
-- MySQL / PostgreSQL
-- IDE (IntelliJ, Eclipse...)
+- MySQL
 
 ## Installation
 1. Cloner le repo
