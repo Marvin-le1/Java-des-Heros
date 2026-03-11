@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${isNew} ? 'Nouveau vilain' : 'Modifier vilain'">Formulaire vilain</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <h1 th:text="${isNew} ? '🦹 Nouveau super-vilain' : '✏️ Modifier — ' + ${vilain.nom}"></h1>
+
+    <form th:action="@{/supervilains/sauvegarder}" th:object="${vilain}" method="post" style="max-width:600px;">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-group">
+            <label for="nom">Nom du vilain *</label>
+            <input type="text" id="nom" th:field="*{nom}" placeholder="Ex : Thanos" required>
+            <span th:if="${#fields.hasErrors('nom')}" style="color:red;font-size:0.85rem;" th:errors="*{nom}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="civilId">Identité secrète (Civil) — optionnel</label>
+            <select id="civilId" name="civilId">
+                <option value="">-- Identité inconnue --</option>
+                <option th:each="civil : ${civils}"
+                        th:value="${civil.id}"
+                        th:text="${civil.nomComplet}"
+                        th:selected="${vilain.identiteSecrete != null and vilain.identiteSecrete.id == civil.id}">
+                </option>
+            </select>
+            <small style="color:#666;">Peut être découverte lors d'une mission et renseignée dans le rapport.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="pouvoir">Pouvoir(s)</label>
+            <textarea id="pouvoir" th:field="*{pouvoir}" rows="3"
+                      placeholder="Ex : Gants de l'infini, contrôle de la réalité…"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="pointFaible">Point faible</label>
+            <textarea id="pointFaible" th:field="*{pointFaible}" rows="2"
+                      placeholder="Ex : Faiblesse émotionnelle, point vulnérable…"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="degreMalveillance">Degré de malveillance (0–10)</label>
+            <input type="number" id="degreMalveillance" th:field="*{degreMalveillance}"
+                   min="0" max="10" value="0">
+            <small style="color:#666;">Mis à jour automatiquement selon les missions.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="commentaire">Commentaire</label>
+            <textarea id="commentaire" th:field="*{commentaire}" rows="3"
+                      placeholder="Informations complémentaires…"></textarea>
+        </div>
+
+        <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+            <button type="submit" class="btn btn-primary">
+                <span th:text="${isNew} ? 'Créer le vilain' : 'Enregistrer les modifications'"></span>
+            </button>
+            <a th:href="@{/supervilains}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

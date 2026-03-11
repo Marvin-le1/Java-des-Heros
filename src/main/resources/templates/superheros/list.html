@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Super-héros — Java des Héros</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>🦸 Super-héros</h1>
+        <a th:href="@{/superheros/nouveau}" class="btn btn-primary"
+           sec:authorize="hasAnyRole('ROLE_SUPERHERO','ROLE_MAITRE_SUPREME')">
+            + Nouveau héros
+        </a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}"   class="alert alert-error"   th:text="${error}"></div>
+
+    <!-- Barre de recherche -->
+    <form method="get" th:action="@{/superheros}" style="margin-bottom:1rem;display:flex;gap:0.5rem;">
+        <input type="text" name="q" th:value="${q}" placeholder="Rechercher par nom ou pouvoir…"
+               style="flex:1;padding:0.5rem;border:1px solid #ddd;border-radius:6px;">
+        <button type="submit" class="btn btn-secondary">Rechercher</button>
+        <a th:href="@{/superheros}" class="btn btn-secondary">Réinitialiser</a>
+    </form>
+
+    <!-- Tableau des héros -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nom du héros</th>
+                    <th>Identité secrète</th>
+                    <th>Pouvoir</th>
+                    <th>Score ⭐</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="hero : ${superheros}">
+                    <td th:text="${hero.id}"></td>
+                    <td><strong th:text="${hero.nom}"></strong></td>
+                    <td th:text="${hero.identiteSecrete != null ? hero.identiteSecrete.nomComplet : '-'}"></td>
+                    <td th:text="${#strings.abbreviate(hero.pouvoir, 50)}"></td>
+                    <td>
+                        <span th:text="${#numbers.formatDecimal(hero.score, 1, 1)}"></span> / 5.0
+                    </td>
+                    <td>
+                        <a th:href="@{/superheros/{id}(id=${hero.id})}" class="btn btn-sm btn-secondary">Voir</a>
+                        <a th:href="@{/superheros/{id}/modifier(id=${hero.id})}" class="btn btn-sm btn-primary"
+                           sec:authorize="hasAnyRole('ROLE_SUPERHERO','ROLE_MAITRE_SUPREME')">Modifier</a>
+                        <form th:action="@{/superheros/{id}/supprimer(id=${hero.id})}" method="post" style="display:inline"
+                              sec:authorize="hasRole('ROLE_MAITRE_SUPREME')">
+                            <button type="submit" class="btn btn-sm btn-danger btn-delete">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(superheros)}">
+                    <td colspan="6" style="text-align:center;color:#999;">Aucun super-héros trouvé.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Classement Top 10 -->
+    <div th:if="${!#lists.isEmpty(topHeros)}" style="margin-top:2rem;">
+        <h2>🏆 Classement — Top héros</h2>
+        <div class="table-container" style="margin-top:0.75rem;">
+            <table>
+                <thead>
+                    <tr><th>Rang</th><th>Héros</th><th>Score</th></tr>
+                </thead>
+                <tbody>
+                    <tr th:each="hero, stat : ${topHeros}">
+                        <td th:text="${stat.count}"></td>
+                        <td th:text="${hero.nom}"></td>
+                        <td th:text="${#numbers.formatDecimal(hero.score, 1, 1)} + ' / 5.0'"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

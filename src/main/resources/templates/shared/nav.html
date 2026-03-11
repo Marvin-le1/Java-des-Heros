@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="nav">
+    <div class="nav-brand"><a th:href="@{/dashboard}">⚡ Java des Héros</a></div>
+    <ul class="nav-links">
+        <li><a th:href="@{/civils}">Civils</a></li>
+        <li><a th:href="@{/organisations}">Organisations</a></li>
+        <li><a th:href="@{/superheros}">Super-héros</a></li>
+        <li><a th:href="@{/supervilains}">Super-vilains</a></li>
+        <li><a th:href="@{/incidents}">Incidents</a></li>
+        <li><a th:href="@{/missions}">Missions</a></li>
+        <li><a th:href="@{/rapports}">Rapports</a></li>
+        <li><a th:href="@{/satisfactions}">Satisfaction</a></li>
+        <li><a th:href="@{/crises}">Crises</a></li>
+        <li><a th:href="@{/litiges}">Litiges</a></li>
+        <li sec:authorize="hasRole('ROLE_MAITRE_SUPREME')"><a th:href="@{/admin}">Admin</a></li>
+    </ul>
+    <div class="nav-user">
+        <span>Bonjour, <strong sec:authentication="name">Utilisateur</strong></span>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" class="btn btn-sm">Déconnexion</button>
+        </form>
+    </div>
+</nav>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${hero.nom} + ' — Java des Héros'">Détail héros</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>🦸 <span th:text="${hero.nom}"></span></h1>
+        <div>
+            <a th:href="@{/superheros/{id}/modifier(id=${hero.id})}" class="btn btn-primary"
+               sec:authorize="hasAnyRole('ROLE_SUPERHERO','ROLE_MAITRE_SUPREME')">Modifier</a>
+            <a th:href="@{/superheros}" class="btn btn-secondary">← Retour</a>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;">
+
+        <!-- Infos principales -->
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>Informations</h2>
+            <table style="width:100%;margin-top:1rem;">
+                <tr>
+                    <td style="font-weight:600;padding:0.5rem 0;width:40%;">Score moyen</td>
+                    <td>
+                        <strong th:text="${#numbers.formatDecimal(hero.score, 1, 1)}"></strong> / 5.0 ⭐
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.5rem 0;">Pouvoir(s)</td>
+                    <td th:text="${hero.pouvoir}"></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.5rem 0;">Point faible</td>
+                    <td th:text="${hero.pointFaible ?: 'Non renseigné'}"></td>
+                </tr>
+                <tr th:if="${hero.commentaire}">
+                    <td style="font-weight:600;padding:0.5rem 0;">Commentaire</td>
+                    <td th:text="${hero.commentaire}"></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Identité secrète -->
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>🔒 Identité secrète</h2>
+            <div th:if="${hero.identiteSecrete != null}" style="margin-top:1rem;">
+                <p><strong>Nom :</strong>
+                   <span th:text="${hero.identiteSecrete.nomComplet}"></span></p>
+                <p th:if="${hero.identiteSecrete.dateNaissance}">
+                    <strong>Date de naissance :</strong>
+                    <span th:text="${#temporals.format(hero.identiteSecrete.dateNaissance, 'dd/MM/yyyy')}"></span>
+                </p>
+                <p th:if="${hero.identiteSecrete.nationalite}">
+                    <strong>Nationalité :</strong>
+                    <span th:text="${hero.identiteSecrete.nationalite}"></span>
+                </p>
+                <p th:if="${hero.identiteSecrete.email}">
+                    <strong>Email :</strong>
+                    <span th:text="${hero.identiteSecrete.email}"></span>
+                </p>
+                <a th:href="@{/civils/{id}(id=${hero.identiteSecrete.id})}"
+                   class="btn btn-sm btn-secondary" style="margin-top:0.75rem;">
+                    Voir la fiche Civil
+                </a>
+            </div>
+            <p th:if="${hero.identiteSecrete == null}" style="color:#999;">Non renseignée</p>
+        </div>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
