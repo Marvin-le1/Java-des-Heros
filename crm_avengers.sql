@@ -514,11 +514,32 @@ CREATE TABLE fichier_joint (
     CONSTRAINT fk_fj_litige
         FOREIGN KEY (id_litige)
         REFERENCES litige (id_litige)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-    -- Au moins un des deux parents doit être renseigné
-    CONSTRAINT chk_fj_parent
-        CHECK (id_satisfaction IS NOT NULL OR id_litige IS NOT NULL)
+        ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+-- Trigger : au moins un des deux parents (satisfaction ou litige) doit être renseigné.
+-- MySQL ne permet pas d'utiliser dans un CHECK une colonne déjà référencée par une FK avec action référentielle.
+DELIMITER $$
+CREATE TRIGGER trg_fj_parent_insert
+BEFORE INSERT ON fichier_joint
+FOR EACH ROW
+BEGIN
+    IF NEW.id_satisfaction IS NULL AND NEW.id_litige IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'fichier_joint : id_satisfaction ou id_litige doit être renseigné.';
+    END IF;
+END$$
+
+CREATE TRIGGER trg_fj_parent_update
+BEFORE UPDATE ON fichier_joint
+FOR EACH ROW
+BEGIN
+    IF NEW.id_satisfaction IS NULL AND NEW.id_litige IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'fichier_joint : id_satisfaction ou id_litige doit être renseigné.';
+    END IF;
+END$$
+DELIMITER ;
 
 
 -- ============================================================
