@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de bord — Java des Héros</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav>
+    <div class="nav-brand"><a th:href="@{/dashboard}">⚡ Java des Héros</a></div>
+    <ul class="nav-links">
+        <li><a th:href="@{/civils}">Civils</a></li>
+        <li><a th:href="@{/organisations}">Organisations</a></li>
+        <li><a th:href="@{/superheros}">Super-héros</a></li>
+        <li><a th:href="@{/supervilains}">Super-vilains</a></li>
+        <li><a th:href="@{/incidents}">Incidents</a></li>
+        <li><a th:href="@{/missions}">Missions</a></li>
+        <li><a th:href="@{/rapports}">Rapports</a></li>
+        <li><a th:href="@{/satisfactions}">Satisfaction</a></li>
+        <li><a th:href="@{/crises}">Crises</a></li>
+        <li><a th:href="@{/litiges}">Litiges</a></li>
+    </ul>
+    <div class="nav-user">
+        <span>Bonjour, <strong sec:authentication="name">Utilisateur</strong></span>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" class="btn btn-sm">Déconnexion</button>
+        </form>
+    </div>
+</nav>
+
+<main class="dashboard">
+    <h1>Tableau de bord</h1>
+    <p>Bienvenue dans le CRM des Avengers.</p>
+
+    <div class="dashboard-grid">
+        <a th:href="@{/civils}" class="dashboard-card">
+            <span class="card-icon">👤</span>
+            <h3>Civils</h3>
+            <p>Gérer les citoyens</p>
+        </a>
+        <a th:href="@{/organisations}" class="dashboard-card">
+            <span class="card-icon">🏢</span>
+            <h3>Organisations</h3>
+            <p>Gérer les organisations</p>
+        </a>
+        <a th:href="@{/superheros}" class="dashboard-card">
+            <span class="card-icon">🦸</span>
+            <h3>Super-héros</h3>
+            <p>Gérer les Avengers</p>
+        </a>
+        <a th:href="@{/supervilains}" class="dashboard-card">
+            <span class="card-icon">🦹</span>
+            <h3>Super-vilains</h3>
+            <p>Gérer les ennemis</p>
+        </a>
+        <a th:href="@{/incidents}" class="dashboard-card">
+            <span class="card-icon">🚨</span>
+            <h3>Incidents</h3>
+            <p>Déclarer un incident</p>
+        </a>
+        <a th:href="@{/missions}" class="dashboard-card">
+            <span class="card-icon">🎯</span>
+            <h3>Missions</h3>
+            <p>Gérer les missions</p>
+        </a>
+        <a th:href="@{/rapports}" class="dashboard-card">
+            <span class="card-icon">📋</span>
+            <h3>Rapports</h3>
+            <p>Rapports de mission</p>
+        </a>
+        <a th:href="@{/satisfactions}" class="dashboard-card">
+            <span class="card-icon">⭐</span>
+            <h3>Satisfaction</h3>
+            <p>Évaluer les missions</p>
+        </a>
+        <a th:href="@{/crises}" class="dashboard-card">
+            <span class="card-icon">⚠️</span>
+            <h3>Crises</h3>
+            <p>Gérer les crises internes</p>
+        </a>
+        <a th:href="@{/litiges}" class="dashboard-card">
+            <span class="card-icon">⚖️</span>
+            <h3>Litiges</h3>
+            <p>Dommages et intérêts</p>
+        </a>
+    </div>
+</main>
+
+<footer>
+    <p>Java des Héros — CRM Avengers | INFDIET10</p>
+</footer>
+
+</body>
+</html>

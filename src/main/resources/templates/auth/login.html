@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion — Java des Héros</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="login-page">
+
+<div class="login-container">
+    <h1>⚡ Java des Héros</h1>
+    <h2>CRM Avengers</h2>
+
+    <div th:if="${param.error}" class="alert alert-error">
+        Identifiant ou mot de passe incorrect.
+    </div>
+    <div th:if="${param.logout}" class="alert alert-info">
+        Vous avez été déconnecté.
+    </div>
+
+    <form th:action="@{/login}" method="post" class="login-form">
+        <div class="form-group">
+            <label for="username">Identifiant</label>
+            <input type="text" id="username" name="username" required autofocus placeholder="Votre identifiant">
+        </div>
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" required placeholder="Votre mot de passe">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+    </form>
+</div>
+
+</body>
+</html>
