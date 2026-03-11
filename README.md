@@ -5,7 +5,7 @@ CRM pour les Avengers permettant de gérer les civils,
 missions, incidents et super-héros.
 
 ## Prérequis
-- Java XX
+- Java 25
 - MySQL / PostgreSQL
 - IDE (IntelliJ, Eclipse...)
 
