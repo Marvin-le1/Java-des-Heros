@@ -32,14 +32,6 @@ public class Organisation {
     @JoinColumn(name = "id_dirigeant")
     private Civil dirigeant;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "civil_organisation",
-        joinColumns = @JoinColumn(name = "id_organisation"),
-        inverseJoinColumns = @JoinColumn(name = "id_civil")
-    )
-    private Set<Civil> membres = new HashSet<>();
-
     @Column(columnDefinition = "TEXT")
     private String commentaire;
 
@@ -48,6 +40,14 @@ public class Organisation {
 
     @Column(name = "date_modification")
     private LocalDateTime dateModification = LocalDateTime.now();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "civil_organisation",
+        joinColumns = @JoinColumn(name = "id_organisation"),
+        inverseJoinColumns = @JoinColumn(name = "id_civil")
+    )
+    private Set<Civil> membres = new HashSet<>();
 
     @PreUpdate
     public void preUpdate() {
