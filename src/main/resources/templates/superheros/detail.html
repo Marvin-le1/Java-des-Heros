@@ -13,7 +13,7 @@
         <h1>🦸 <span th:text="${hero.nom}"></span></h1>
         <div>
             <a th:href="@{/superheros/{id}/modifier(id=${hero.id})}" class="btn btn-primary"
-               sec:authorize="hasAnyRole('ROLE_SUPERHERO','ROLE_MAITRE_SUPREME')">Modifier</a>
+               sec:authorize="hasAnyAuthority('Gestionnaire Super-Heros','Maitre Supreme')">Modifier</a>
             <a th:href="@{/superheros}" class="btn btn-secondary">← Retour</a>
         </div>
     </div>

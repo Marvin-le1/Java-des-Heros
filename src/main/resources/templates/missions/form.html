@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${isNew} ? 'Nouvelle mission' : 'Modifier mission' + ' — Java des Héros'">Mission</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1 th:text="${isNew} ? '🎯 Nouvelle mission' : '✏️ Modifier la mission'">Mission</h1>
+        <a th:href="@{/missions}" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="form-container">
+        <form th:action="@{/missions/sauvegarder}" th:object="${mission}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <!-- Titre -->
+            <div class="form-group">
+                <label for="titre">Titre de la mission *</label>
+                <input type="text" id="titre" th:field="*{titre}"
+                       placeholder="Ex : Neutralisation Thanos – New York" class="form-control">
+                <span th:if="${#fields.hasErrors('titre')}" th:errors="*{titre}" class="field-error"></span>
+            </div>
+
+            <!-- Nature + Statut -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                    <label for="nature">Nature</label>
+                    <select id="nature" th:field="*{nature}" class="form-control">
+                        <option th:each="n : ${natures}" th:value="${n}" th:text="${n}"></option>
+                    </select>
+                </div>
+                <div class="form-group" th:if="${!isNew}">
+                    <label for="statut">Statut</label>
+                    <select id="statut" th:field="*{statut}" class="form-control">
+                        <option th:each="s : ${statuts}" th:value="${s}" th:text="${s}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Incident lié -->
+            <div class="form-group">
+                <label for="incidentId">Incident à l'origine (optionnel)</label>
+                <select id="incidentId" name="incidentId" class="form-control">
+                    <option value="">— Aucun incident —</option>
+                    <option th:each="inc : ${incidents}"
+                            th:value="${inc.id}"
+                            th:text="${inc.id + ' — ' + inc.titre}"
+                            th:selected="${incidentPreselect != null and incidentPreselect == inc.id}
+                                        or (mission.incident != null and mission.incident.id == inc.id)">
+                    </option>
+                </select>
+            </div>
+
+            <!-- Dates -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                    <label for="dateDebut">Date de début</label>
+                    <input type="datetime-local" id="dateDebut" th:field="*{dateDebut}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="dateFin">Date de fin prévue</label>
+                    <input type="datetime-local" id="dateFin" th:field="*{dateFin}" class="form-control">
+                </div>
+            </div>
+
+            <!-- Niveaux -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                    <label for="niveauGravite">Niveau de gravité</label>
+                    <select id="niveauGravite" th:field="*{niveauGravite}" class="form-control">
+                        <option th:each="g : ${gravites}" th:value="${g}" th:text="${g}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="niveauUrgence">Niveau d'urgence</label>
+                    <select id="niveauUrgence" th:field="*{niveauUrgence}" class="form-control">
+                        <option th:each="u : ${urgences}" th:value="${u}" th:text="${u}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Itinéraire -->
+            <div class="form-group">
+                <label for="itineraire">Itinéraire / Localisation</label>
+                <textarea id="itineraire" th:field="*{itineraire}" class="form-control" rows="3"
+                          placeholder="Ex : New York → Wakanda → Titan"></textarea>
+            </div>
+
+            <!-- Super-héros assignés -->
+            <div class="form-group">
+                <label>Super-héros assignés</label>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.5rem;
+                            border:1px solid #ddd;border-radius:6px;padding:1rem;max-height:200px;overflow-y:auto;">
+                    <label th:each="hero : ${superheros}"
+                           style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                        <input type="checkbox" name="superheroIds" th:value="${hero.id}"
+                               th:checked="${mission.superheros != null and mission.superheros.contains(hero)}">
+                        <span th:text="${hero.nom}"></span>
+                    </label>
+                    <p th:if="${#lists.isEmpty(superheros)}" style="color:#999;margin:0;">
+                        Aucun super-héros disponible.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Infos complémentaires -->
+            <div class="form-group">
+                <label for="infosComplementaires">Informations complémentaires</label>
+                <textarea id="infosComplementaires" th:field="*{infosComplementaires}"
+                          class="form-control" rows="4"
+                          placeholder="Détails, rapport de situation, notes de mission…"></textarea>
+            </div>
+
+            <!-- Boutons -->
+            <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                <a th:href="@{/missions}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

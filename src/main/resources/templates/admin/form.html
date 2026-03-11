@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${isNew} ? 'Nouvel utilisateur' : 'Modifier utilisateur' + ' — Java des Héros'">Utilisateur</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1 th:text="${isNew} ? '👤 Nouvel utilisateur' : '✏️ Modifier l\'utilisateur'">Utilisateur</h1>
+        <a th:href="@{/admin}" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    <div class="form-container">
+
+        <!-- ====== Création ====== -->
+        <form th:if="${isNew}" th:action="@{/admin/creer}" method="post">
+
+            <div class="form-group">
+                <label for="login">Login *</label>
+                <input type="text" id="login" name="login" class="form-control"
+                       placeholder="Ex : ironman" required minlength="3">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" class="form-control"
+                       placeholder="Ex : tony@stark.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="motDePasse">Mot de passe * (min. 6 caractères)</label>
+                <input type="password" id="motDePasse" name="motDePasse" class="form-control"
+                       required minlength="6" placeholder="••••••••">
+            </div>
+
+            <div class="form-group">
+                <label>Rôles attribués</label>
+                <div style="border:1px solid #ddd;border-radius:6px;padding:1rem;">
+                    <label th:each="r : ${roles}"
+                           style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;cursor:pointer;">
+                        <input type="checkbox" name="roleIds" th:value="${r.id}">
+                        <strong th:text="${r.nom}"></strong>
+                        <span th:if="${r.module}" style="color:#666;font-size:0.85rem;"
+                              th:text="'(' + ${r.module} + ')'"></span>
+                    </label>
+                    <p th:if="${#lists.isEmpty(roles)}" style="color:#999;margin:0;">Aucun rôle disponible.</p>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">💾 Créer l'utilisateur</button>
+                <a th:href="@{/admin}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+
+        <!-- ====== Édition ====== -->
+        <form th:if="${!isNew}" th:action="@{/admin/{id}/modifier(id=${utilisateur.id})}" method="post">
+
+            <div class="form-group">
+                <label>Login</label>
+                <input type="text" class="form-control" th:value="${utilisateur.username}" disabled
+                       style="background:#f5f5f5;cursor:not-allowed;">
+                <small style="color:#666;">Le login ne peut pas être modifié.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="emailEdit">Email *</label>
+                <input type="email" id="emailEdit" name="email" class="form-control"
+                       th:value="${utilisateur.email}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Rôles attribués</label>
+                <div style="border:1px solid #ddd;border-radius:6px;padding:1rem;">
+                    <label th:each="r : ${roles}"
+                           style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;cursor:pointer;">
+                        <input type="checkbox" name="roleIds" th:value="${r.id}"
+                               th:checked="${utilisateur.roles.contains(r)}">
+                        <strong th:text="${r.nom}"></strong>
+                        <span th:if="${r.module}" style="color:#666;font-size:0.85rem;"
+                              th:text="'(' + ${r.module} + ')'"></span>
+                    </label>
+                    <p th:if="${#lists.isEmpty(roles)}" style="color:#999;margin:0;">Aucun rôle disponible.</p>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                <a th:href="@{/admin}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

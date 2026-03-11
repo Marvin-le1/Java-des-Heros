@@ -31,7 +31,6 @@ public class UtilisateurDetailsService implements UserDetailsService {
             .authorities(utilisateur.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getNom()))
                 .collect(Collectors.toList()))
-            .disabled(!utilisateur.isActif())
             .build();
     }
 }

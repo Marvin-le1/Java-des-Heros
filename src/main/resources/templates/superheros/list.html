@@ -12,7 +12,7 @@
     <div class="actions-bar">
         <h1>🦸 Super-héros</h1>
         <a th:href="@{/superheros/nouveau}" class="btn btn-primary"
-           sec:authorize="hasAnyRole('ROLE_SUPERHERO','ROLE_MAITRE_SUPREME')">
+           sec:authorize="hasAnyAuthority('Gestionnaire Super-Heros','Maitre Supreme')">
             + Nouveau héros
         </a>
     </div>
@@ -53,9 +53,9 @@
                     <td>
                         <a th:href="@{/superheros/{id}(id=${hero.id})}" class="btn btn-sm btn-secondary">Voir</a>
                         <a th:href="@{/superheros/{id}/modifier(id=${hero.id})}" class="btn btn-sm btn-primary"
-                           sec:authorize="hasAnyRole('ROLE_SUPERHERO','ROLE_MAITRE_SUPREME')">Modifier</a>
+                           sec:authorize="hasAnyAuthority('Gestionnaire Super-Heros','Maitre Supreme')">Modifier</a>
                         <form th:action="@{/superheros/{id}/supprimer(id=${hero.id})}" method="post" style="display:inline"
-                              sec:authorize="hasRole('ROLE_MAITRE_SUPREME')">
+                              sec:authorize="hasAuthority('Maitre Supreme')">
                             <button type="submit" class="btn btn-sm btn-danger btn-delete">Supprimer</button>
                         </form>
                     </td>

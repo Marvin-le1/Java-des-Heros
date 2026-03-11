@@ -1,0 +1,12 @@
+package com.avengers.javadesheros.repository;
+
+import com.avengers.javadesheros.model.Incident;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface IncidentRepository extends JpaRepository<Incident, Long> {
+    List<Incident> findByStatut(Incident.Statut statut);
+}

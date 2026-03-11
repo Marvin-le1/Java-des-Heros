@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${mission.titre} + ' — Java des Héros'">Détail mission</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>🎯 <span th:text="${mission.titre}"></span></h1>
+        <div>
+            <a th:href="@{/missions/{id}/modifier(id=${mission.id})}" class="btn btn-primary"
+               sec:authorize="hasAnyAuthority('Gestionnaire Missions','Maitre Supreme')">Modifier</a>
+            <a th:href="@{/missions}" class="btn btn-secondary">← Retour</a>
+        </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}"   class="alert alert-error"   th:text="${error}"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;">
+
+        <!-- Infos principales -->
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>Informations</h2>
+            <table style="width:100%;margin-top:1rem;">
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;width:40%;">Nature</td>
+                    <td th:text="${mission.nature}"></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;">Statut</td>
+                    <td>
+                        <span th:text="${mission.statut}"
+                              th:classappend="${mission.statut.name() == 'en_cours'} ? 'badge-success' :
+                                             (${mission.statut.name() == 'planifiee'} ? 'badge-info' :
+                                             (${mission.statut.name() == 'annulee'} ? 'badge-danger' : 'badge-secondary'))"
+                              class="badge"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;">Urgence</td>
+                    <td>
+                        <span th:text="${mission.niveauUrgence}"
+                              th:classappend="${mission.niveauUrgence.name() == 'critique'} ? 'badge-danger' :
+                                             (${mission.niveauUrgence.name() == 'eleve'} ? 'badge-warning' : 'badge-secondary')"
+                              class="badge"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;">Gravité</td>
+                    <td th:text="${mission.niveauGravite}"></td>
+                </tr>
+                <tr th:if="${mission.dateDebut}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Début</td>
+                    <td th:text="${#temporals.format(mission.dateDebut, 'dd/MM/yyyy HH:mm')}"></td>
+                </tr>
+                <tr th:if="${mission.dateFin}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Fin prévue</td>
+                    <td th:text="${#temporals.format(mission.dateFin, 'dd/MM/yyyy HH:mm')}"></td>
+                </tr>
+                <tr th:if="${mission.itineraire}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Itinéraire</td>
+                    <td th:text="${mission.itineraire}"></td>
+                </tr>
+                <tr th:if="${mission.incident}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Incident lié</td>
+                    <td>
+                        <span th:text="${'#' + mission.incident.id + ' — ' + mission.incident.titre}"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Super-héros + Statut rapide -->
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+
+            <!-- Héros assignés -->
+            <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <h2>🦸 Équipe</h2>
+                <div th:if="${mission.superheros.isEmpty()}" style="color:#999;margin-top:1rem;">
+                    Aucun super-héros assigné à cette mission.
+                </div>
+                <ul th:if="${!mission.superheros.isEmpty()}" style="margin-top:1rem;padding-left:1.5rem;">
+                    <li th:each="hero : ${mission.superheros}">
+                        <a th:href="@{/superheros/{id}(id=${hero.id})}" th:text="${hero.nom}"></a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Changer statut -->
+            <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);"
+                 sec:authorize="hasAnyAuthority('Gestionnaire Missions','Maitre Supreme')">
+                <h2>⚙️ Changer le statut</h2>
+                <form th:action="@{/missions/{id}/statut(id=${mission.id})}" method="post"
+                      style="display:flex;gap:0.75rem;margin-top:1rem;align-items:center;">
+                    <select name="statut" class="form-control" style="flex:1;">
+                        <option th:each="s : ${T(com.avengers.javadesheros.model.Mission.Statut).values()}"
+                                th:value="${s}"
+                                th:text="${s}"
+                                th:selected="${s == mission.statut}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes / Infos complémentaires -->
+    <div th:if="${mission.infosComplementaires}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>📝 Informations complémentaires</h2>
+        <p th:text="${mission.infosComplementaires}" style="margin-top:0.75rem;white-space:pre-line;"></p>
+    </div>
+
+    <!-- Civils impliqués -->
+    <div th:if="${!mission.civils.isEmpty()}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>👤 Civils impliqués</h2>
+        <div class="table-container" style="margin-top:0.75rem;">
+            <table>
+                <thead>
+                    <tr><th>Nom complet</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr th:each="civil : ${mission.civils}">
+                        <td th:text="${civil.nomComplet}"></td>
+                        <td>
+                            <a th:href="@{/civils/{id}(id=${civil.id})}" class="btn btn-sm btn-secondary">Voir</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Suppression -->
+    <div style="margin-top:2rem;" sec:authorize="hasAuthority('Maitre Supreme')">
+        <form th:action="@{/missions/{id}/supprimer(id=${mission.id})}" method="post"
+              style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-delete">🗑️ Supprimer cette mission</button>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

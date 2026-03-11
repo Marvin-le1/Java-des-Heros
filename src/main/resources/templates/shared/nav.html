@@ -14,7 +14,7 @@
         <li><a th:href="@{/satisfactions}">Satisfaction</a></li>
         <li><a th:href="@{/crises}">Crises</a></li>
         <li><a th:href="@{/litiges}">Litiges</a></li>
-        <li sec:authorize="hasRole('ROLE_MAITRE_SUPREME')"><a th:href="@{/admin}">Admin</a></li>
+        <li sec:authorize="hasAuthority('Maitre Supreme')"><a th:href="@{/admin}">Admin ⚙️</a></li>
     </ul>
     <div class="nav-user">
         <span>Bonjour, <strong sec:authentication="name">Utilisateur</strong></span>
