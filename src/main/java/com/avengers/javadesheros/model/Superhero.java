@@ -7,30 +7,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "superheros")
+@Table(name = "super_heros")
 @Getter @Setter @NoArgsConstructor
 public class Superhero {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_super_heros")
     private Long id;
 
     @NotBlank(message = "Le nom du héros est obligatoire")
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(name = "nom_hero", nullable = false, unique = true, length = 150)
     private String nom;
 
-    @NotBlank(message = "Le pouvoir est obligatoire")
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String pouvoir;
 
     @Column(name = "point_faible", columnDefinition = "TEXT")
     private String pointFaible;
 
     /**
-     * Score moyen calculé depuis les enquêtes de satisfaction (0.0 à 5.0).
+     * Score moyen calculé depuis les enquêtes de satisfaction.
      * Mis à jour automatiquement par SatisfactionService.
      */
-    @Column(columnDefinition = "DOUBLE DEFAULT 0.0")
+    @Column(columnDefinition = "DECIMAL(5,2) DEFAULT 0.00")
     private Double score = 0.0;
 
     @Column(columnDefinition = "TEXT")

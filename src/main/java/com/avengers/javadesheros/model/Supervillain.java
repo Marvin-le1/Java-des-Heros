@@ -7,16 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "supervilains")
+@Table(name = "super_vilain")
 @Getter @Setter @NoArgsConstructor
 public class Supervillain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_super_vilain")
     private Long id;
 
     @NotBlank(message = "Le nom du vilain est obligatoire")
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(name = "nom_vilain", nullable = false, unique = true, length = 150)
     private String nom;
 
     @Column(columnDefinition = "TEXT")

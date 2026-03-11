@@ -31,18 +31,18 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Création des rôles si absents
-        Role roleMaitre = creerRoleSiAbsent("ROLE_MAITRE_SUPREME", "Accès total à toutes les fonctionnalités");
-        creerRoleSiAbsent("ROLE_CIVIL",        "Gestion du module Civils");
-        creerRoleSiAbsent("ROLE_ORGANISATION", "Gestion du module Organisations");
-        creerRoleSiAbsent("ROLE_SUPERHERO",    "Gestion du module Super-héros");
-        creerRoleSiAbsent("ROLE_SUPERVILLAIN", "Gestion du module Super-vilains");
-        creerRoleSiAbsent("ROLE_INCIDENT",     "Gestion du module Incidents");
-        creerRoleSiAbsent("ROLE_MISSION",      "Gestion du module Missions");
-        creerRoleSiAbsent("ROLE_RAPPORT",      "Gestion du module Rapports");
-        creerRoleSiAbsent("ROLE_SATISFACTION", "Gestion du module Satisfaction");
-        creerRoleSiAbsent("ROLE_CRISE",        "Gestion du module Crise");
-        creerRoleSiAbsent("ROLE_LITIGE",       "Gestion du module Litiges");
+        // Création des rôles si absents (noms alignés sur script SQL de P1)
+        Role roleMaitre = creerRoleSiAbsent("Maitre Supreme",             "all");
+        creerRoleSiAbsent("Gestionnaire Civils",        "civils");
+        creerRoleSiAbsent("Gestionnaire Organisations", "organisations");
+        creerRoleSiAbsent("Gestionnaire Super-Heros",   "super_heros");
+        creerRoleSiAbsent("Gestionnaire Super-Vilains", "super_vilains");
+        creerRoleSiAbsent("Gestionnaire Incidents",     "incidents");
+        creerRoleSiAbsent("Gestionnaire Missions",      "missions");
+        creerRoleSiAbsent("Gestionnaire Rapports",      "rapports");
+        creerRoleSiAbsent("Gestionnaire Satisfaction",  "satisfaction");
+        creerRoleSiAbsent("Gestionnaire Crises",        "crises");
+        creerRoleSiAbsent("Gestionnaire Litiges",       "litiges");
 
         // Compte admin par défaut
         if (!utilisateurRepository.existsByUsername("admin")) {
@@ -58,9 +58,9 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("✔ Initialisation de la base de données terminée.");
     }
 
-    private Role creerRoleSiAbsent(String nom, String description) {
+    private Role creerRoleSiAbsent(String nom, String module) {
         return roleRepository.findByNom(nom).orElseGet(() -> {
-            Role role = new Role(nom, description);
+            Role role = new Role(nom, module);
             return roleRepository.save(role);
         });
     }

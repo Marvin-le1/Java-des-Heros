@@ -9,17 +9,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * PLACEHOLDER — à compléter par P1.
- * Cette version contient les champs minimaux nécessaires
- * pour les modules Superhero et Supervillain.
+ * Entité Civil — alignée sur la table `civil` du script SQL de P1.
  */
 @Entity
-@Table(name = "civils")
+@Table(name = "civil")
 @Getter @Setter @NoArgsConstructor
 public class Civil {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_civil")
     private Long id;
 
     @Column(nullable = false, length = 100)
@@ -29,19 +28,10 @@ public class Civil {
     private String prenom;
 
     @Column(length = 10)
-    private String civilite; // M., Mme, Dr, etc.
+    private String civilite; // M., Mme, Mx
 
-    @Column(length = 255)
-    private String adresse;
-
-    @Column(name = "code_postal", length = 20)
-    private String codePostal;
-
-    @Column(length = 100)
-    private String ville;
-
-    @Column(length = 100)
-    private String pays;
+    @Column(name = "adresse_postale", columnDefinition = "TEXT")
+    private String adressePostale;
 
     @Column(length = 150)
     private String email;
