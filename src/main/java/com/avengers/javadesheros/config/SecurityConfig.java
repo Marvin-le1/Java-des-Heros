@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                 .requestMatchers("/login", "/register").permitAll()
                 // Maitre suprême
-                .requestMatchers("/admin/**").hasRole("MAITRE_SUPREME")
+                .requestMatchers("/admin/**").hasAuthority("Maitre Supreme")
                 // Accès authentifié pour tout le reste
                 .anyRequest().authenticated()
             )

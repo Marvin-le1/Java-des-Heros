@@ -6,22 +6,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "role")
 @Getter @Setter @NoArgsConstructor
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_role")
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String nom; // ex: ROLE_ADMIN, ROLE_CIVIL, ROLE_MAITRE_SUPREME
+    @Column(name = "nom_role", nullable = false, unique = true, length = 100)
+    private String nom; // ex: Gestionnaire Civils, Maitre Supreme
 
-    @Column(length = 255)
-    private String description;
+    @Column(length = 100)
+    private String module;
 
-    public Role(String nom, String description) {
+    public Role(String nom, String module) {
         this.nom = nom;
-        this.description = description;
+        this.module = module;
     }
 }
