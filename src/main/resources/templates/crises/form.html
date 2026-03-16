@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${isNew} ? 'Nouvelle crise' : 'Modifier crise' + ' — Java des Héros'">Crise</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1 th:text="${isNew} ? '⚡ Nouvelle crise' : '✏️ Modifier la crise'">Crise</h1>
+        <a th:href="@{/crises}" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="form-container">
+        <form th:action="@{/crises/sauvegarder}" th:object="${crise}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label for="titre">Titre *</label>
+                <input type="text" id="titre" th:field="*{titre}" class="form-control"
+                       placeholder="Ex : Iron Man démasqué en direct" required>
+                <span th:if="${#fields.hasErrors('titre')}" th:errors="*{titre}" class="field-error"></span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                    <label for="typeCrise">Type de crise</label>
+                    <select id="typeCrise" th:field="*{typeCrise}" class="form-control">
+                        <option th:each="t : ${typesCrise}" th:value="${t}" th:text="${t}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="niveauAlerte">Niveau d'alerte</label>
+                    <select id="niveauAlerte" th:field="*{niveauAlerte}" class="form-control">
+                        <option th:each="n : ${niveauxAlerte}" th:value="${n}" th:text="${n}"></option>
+                    </select>
+                </div>
+                <div class="form-group" th:if="${!isNew}">
+                    <label for="statut">Statut</label>
+                    <select id="statut" th:field="*{statut}" class="form-control">
+                        <option th:each="s : ${statuts}" th:value="${s}" th:text="${s}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="missionId">Mission liée (optionnel)</label>
+                <select id="missionId" name="missionId" class="form-control">
+                    <option value="">— Aucune mission —</option>
+                    <option th:each="m : ${missions}"
+                            th:value="${m.id}"
+                            th:text="${m.titre}"
+                            th:selected="${crise.mission != null and crise.mission.id == m.id}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}" class="form-control" rows="4"
+                          placeholder="Décrivez la crise en détail…"></textarea>
+            </div>
+
+            <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                <a th:href="@{/crises}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

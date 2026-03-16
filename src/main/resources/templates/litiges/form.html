@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${isNew} ? 'Nouveau litige' : 'Modifier litige' + ' — Java des Héros'">Litige</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1 th:text="${isNew} ? '⚖️ Nouveau litige' : '✏️ Modifier le litige'">Litige</h1>
+        <a th:href="@{/litiges}" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="form-container">
+        <form th:action="@{/litiges/sauvegarder}" th:object="${litige}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label for="titre">Titre du litige *</label>
+                <input type="text" id="titre" th:field="*{titre}" class="form-control"
+                       placeholder="Ex : Dommages collatéraux — Bataille de New York" required>
+                <span th:if="${#fields.hasErrors('titre')}" th:errors="*{titre}" class="field-error"></span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                    <label for="typeLitige">Type de litige</label>
+                    <select id="typeLitige" th:field="*{typeLitige}" class="form-control">
+                        <option th:each="t : ${types}" th:value="${t}" th:text="${t}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="statut">Statut</label>
+                    <select id="statut" th:field="*{statut}" class="form-control">
+                        <option th:each="s : ${statuts}" th:value="${s}" th:text="${s}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="missionId">Mission liée (optionnel)</label>
+                <select id="missionId" name="missionId" class="form-control">
+                    <option value="">— Aucune —</option>
+                    <option th:each="m : ${missions}"
+                            th:value="${m.id}"
+                            th:text="${m.titre}"
+                            th:selected="${(missionPreselect != null and missionPreselect == m.id)
+                                          or (litige.mission != null and litige.mission.id == m.id)}">
+                    </option>
+                </select>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                    <label for="plaignantId">Civil plaignant</label>
+                    <select id="plaignantId" name="plaignantId" class="form-control">
+                        <option value="">— Aucun —</option>
+                        <option th:each="c : ${civils}"
+                                th:value="${c.id}"
+                                th:text="${c.nomComplet}"
+                                th:selected="${litige.plaignant != null and litige.plaignant.id == c.id}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="superheroId">Super-héros mis en cause</label>
+                    <select id="superheroId" name="superheroId" class="form-control">
+                        <option value="">— Aucun —</option>
+                        <option th:each="h : ${superheros}"
+                                th:value="${h.id}"
+                                th:text="${h.nom}"
+                                th:selected="${litige.superhero != null and litige.superhero.id == h.id}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}" class="form-control" rows="4"
+                          placeholder="Détails du litige, faits reprochés…"></textarea>
+            </div>
+
+            <div class="form-group" th:if="${!isNew}">
+                <label for="resolution">Résolution / Décision</label>
+                <textarea id="resolution" th:field="*{resolution}" class="form-control" rows="3"
+                          placeholder="Comment le litige a-t-il été résolu ?"></textarea>
+            </div>
+
+            <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                <a th:href="@{/litiges}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

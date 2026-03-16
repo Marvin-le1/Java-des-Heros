@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Organisations — Java des Héros</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>🏢 Organisations</h1>
+        <a th:href="@{/organisations/nouveau}" class="btn btn-primary"
+           sec:authorize="hasAnyAuthority('Gestionnaire Organisations','Maitre Supreme')">
+            + Nouvelle organisation
+        </a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}"   class="alert alert-error"   th:text="${error}"></div>
+
+    <form method="get" th:action="@{/organisations}" style="margin-bottom:1rem;display:flex;gap:0.5rem;">
+        <input type="text" name="q" th:value="${q}" placeholder="Rechercher par nom…"
+               style="flex:1;padding:0.5rem;border:1px solid #ddd;border-radius:6px;">
+        <button type="submit" class="btn btn-secondary">Rechercher</button>
+        <a th:href="@{/organisations}" class="btn btn-secondary">Réinitialiser</a>
+    </form>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nom</th>
+                    <th>Dirigeant</th>
+                    <th>Siège</th>
+                    <th>Membres</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="org : ${organisations}">
+                    <td th:text="${org.id}"></td>
+                    <td><strong th:text="${org.nom}"></strong></td>
+                    <td th:text="${org.dirigeant != null ? org.dirigeant.nomComplet : '—'}"></td>
+                    <td th:text="${org.adresseSiege != null ? #strings.abbreviate(org.adresseSiege, 40) : '—'}"></td>
+                    <td th:text="${org.membres.size()}"></td>
+                    <td>
+                        <a th:href="@{/organisations/{id}(id=${org.id})}" class="btn btn-sm btn-secondary">Voir</a>
+                        <a th:href="@{/organisations/{id}/modifier(id=${org.id})}" class="btn btn-sm btn-primary"
+                           sec:authorize="hasAnyAuthority('Gestionnaire Organisations','Maitre Supreme')">Modifier</a>
+                        <form th:action="@{/organisations/{id}/supprimer(id=${org.id})}" method="post" style="display:inline"
+                              sec:authorize="hasAuthority('Maitre Supreme')">
+                            <button type="submit" class="btn btn-sm btn-danger btn-delete">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(organisations)}">
+                    <td colspan="6" style="text-align:center;color:#999;">Aucune organisation trouvée.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

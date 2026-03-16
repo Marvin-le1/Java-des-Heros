@@ -37,7 +37,7 @@ public class CivilController {
 
     // ---- Formulaire ajout ----
     @GetMapping("/nouveau")
-    @PreAuthorize("hasAnyRole('ROLE_CIVIL','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Civils','Maitre Supreme')")
     public String nouveauForm(Model model) {
         model.addAttribute("civil", new Civil());
         model.addAttribute("isNew", true);
@@ -46,7 +46,7 @@ public class CivilController {
 
     // ---- Formulaire édition ----
     @GetMapping("/{id}/modifier")
-    @PreAuthorize("hasAnyRole('ROLE_CIVIL','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Civils','Maitre Supreme')")
     public String modifierForm(@PathVariable Long id, Model model) {
         model.addAttribute("civil", civilService.findById(id));
         model.addAttribute("isNew", false);
@@ -55,7 +55,7 @@ public class CivilController {
 
     // ---- Sauvegarder ----
     @PostMapping("/sauvegarder")
-    @PreAuthorize("hasAnyRole('ROLE_CIVIL','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Civils','Maitre Supreme')")
     public String sauvegarder(@Valid @ModelAttribute("civil") Civil civil,
                               BindingResult result,
                               RedirectAttributes flash,
@@ -75,7 +75,7 @@ public class CivilController {
 
     // ---- Supprimer ----
     @PostMapping("/{id}/supprimer")
-    @PreAuthorize("hasRole('ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAuthority('Maitre Supreme')")
     public String supprimer(@PathVariable Long id, RedirectAttributes flash) {
         try {
             civilService.deleteById(id);

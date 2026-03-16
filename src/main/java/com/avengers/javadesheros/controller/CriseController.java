@@ -41,7 +41,7 @@ public class CriseController {
 
     // ---- Formulaire ajout ----
     @GetMapping("/nouveau")
-    @PreAuthorize("hasAnyRole('ROLE_CRISE','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Crises','Maitre Supreme')")
     public String nouveauForm(Model model) {
         model.addAttribute("crise", new Crise());
         populateFormModel(model);
@@ -51,7 +51,7 @@ public class CriseController {
 
     // ---- Formulaire édition ----
     @GetMapping("/{id}/modifier")
-    @PreAuthorize("hasAnyRole('ROLE_CRISE','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Crises','Maitre Supreme')")
     public String modifierForm(@PathVariable Long id, Model model) {
         model.addAttribute("crise", criseService.findById(id));
         populateFormModel(model);
@@ -61,7 +61,7 @@ public class CriseController {
 
     // ---- Sauvegarder ----
     @PostMapping("/sauvegarder")
-    @PreAuthorize("hasAnyRole('ROLE_CRISE','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Crises','Maitre Supreme')")
     public String sauvegarder(@Valid @ModelAttribute("crise") Crise crise,
                               BindingResult result,
                               @RequestParam(required = false) Long missionId,
@@ -83,7 +83,7 @@ public class CriseController {
 
     // ---- Supprimer ----
     @PostMapping("/{id}/supprimer")
-    @PreAuthorize("hasRole('ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAuthority('Maitre Supreme')")
     public String supprimer(@PathVariable Long id, RedirectAttributes flash) {
         try {
             criseService.deleteById(id);
