@@ -20,4 +20,7 @@ public interface SatisfactionRepository extends JpaRepository<Satisfaction, Long
 
     @Query("SELECT s FROM Satisfaction s WHERE s.mission.id = :missionId ORDER BY s.dateEvaluation DESC")
     List<Satisfaction> findByMissionIdOrderByDate(@Param("missionId") Long missionId);
+
+    @Query("SELECT AVG(s.note) FROM Satisfaction s JOIN s.mission m JOIN m.superheros h WHERE h.id = :heroId")
+    Double avgNoteByHero(@Param("heroId") Long heroId);
 }

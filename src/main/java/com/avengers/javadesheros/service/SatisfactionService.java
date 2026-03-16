@@ -60,9 +60,10 @@ public class SatisfactionService {
         Satisfaction saved = satisfactionRepository.save(satisfaction);
 
         // Recalculer le score moyen du/des héros de la mission
-        mission.getSuperheros().forEach(hero ->
-            superheroService.updateScore(hero.getId())
-        );
+        mission.getSuperheros().forEach(hero -> {
+            Double avg = satisfactionRepository.avgNoteByHero(hero.getId());
+            superheroService.updateScore(hero.getId(), avg != null ? avg : hero.getScore());
+        });
 
         return saved;
     }
@@ -73,9 +74,10 @@ public class SatisfactionService {
         satisfactionRepository.deleteById(id);
         // Recalculer les scores
         missionRepository.findById(missionId).ifPresent(mission ->
-            mission.getSuperheros().forEach(hero ->
-                superheroService.updateScore(hero.getId())
-            )
+            mission.getSuperheros().forEach(hero -> {
+                Double avg = satisfactionRepository.avgNoteByHero(hero.getId());
+                superheroService.updateScore(hero.getId(), avg != null ? avg : hero.getScore());
+            })
         );
     }
 
