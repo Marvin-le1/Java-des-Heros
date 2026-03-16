@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapports — Java des Héros</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>📄 Rapports</h1>
+        <a th:href="@{/rapports/nouveau}" class="btn btn-primary"
+           sec:authorize="hasAnyAuthority('Gestionnaire Rapports','Maitre Supreme')">
+            + Nouveau rapport
+        </a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}"   class="alert alert-error"   th:text="${error}"></div>
+
+    <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <form method="get" th:action="@{/rapports}" style="display:flex;gap:0.5rem;flex:1;">
+            <input type="text" name="q" th:value="${q}" placeholder="Rechercher par mission, intervention, dégâts…"
+                   style="flex:1;padding:0.5rem;border:1px solid #ddd;border-radius:6px;">
+            <button type="submit" class="btn btn-secondary">Rechercher</button>
+            <a th:href="@{/rapports}" class="btn btn-secondary">Réinitialiser</a>
+        </form>
+
+        <form method="get" th:action="@{/rapports}" style="display:flex;gap:0.5rem;align-items:center;">
+            <select name="resultat" style="padding:0.5rem;border:1px solid #ddd;border-radius:6px;">
+                <option value="">— Tous les résultats —</option>
+                <option th:each="r : ${resultats}"
+                        th:value="${r}"
+                        th:text="${r}"
+                        th:selected="${r.name() == resultatFiltre}"></option>
+            </select>
+            <button type="submit" class="btn btn-secondary">Filtrer</button>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Mission</th>
+                    <th>Résultat</th>
+                    <th>Date rapport</th>
+                    <th>Interlocuteur</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="rapport : ${rapports}">
+                    <td th:text="${rapport.id}"></td>
+                    <td>
+                        <a th:if="${rapport.mission != null}"
+                           th:href="@{/missions/{id}(id=${rapport.mission.id})}"
+                           th:text="${rapport.mission.titre}"></a>
+                        <span th:if="${rapport.mission == null}" style="color:#999;">—</span>
+                    </td>
+                    <td>
+                        <span th:if="${rapport.resultat != null}"
+                              th:text="${rapport.resultat}"
+                              th:classappend="${rapport.resultat.name() == 'succes'} ? 'badge-success' :
+                                            (${rapport.resultat.name() == 'echec_partiel'} ? 'badge-warning' : 'badge-danger')"
+                              class="badge"></span>
+                        <span th:if="${rapport.resultat == null}" class="badge badge-secondary">non renseigné</span>
+                    </td>
+                    <td th:text="${#temporals.format(rapport.dateRapport, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td>
+                        <span th:if="${rapport.interlocuteurCivil != null}" th:text="${rapport.interlocuteurCivil.nomComplet}"></span>
+                        <span th:if="${rapport.interlocuteurCivil == null and rapport.interlocuteurHero != null}"
+                              th:text="${rapport.interlocuteurHero.nom}"></span>
+                        <span th:if="${rapport.interlocuteurCivil == null and rapport.interlocuteurHero == null}" style="color:#999;">—</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/rapports/{id}(id=${rapport.id})}" class="btn btn-sm btn-secondary">Voir</a>
+                        <a th:href="@{/rapports/{id}/modifier(id=${rapport.id})}" class="btn btn-sm btn-primary"
+                           sec:authorize="hasAnyAuthority('Gestionnaire Rapports','Maitre Supreme')">Modifier</a>
+                        <form th:action="@{/rapports/{id}/supprimer(id=${rapport.id})}" method="post" style="display:inline"
+                              sec:authorize="hasAuthority('Maitre Supreme')">
+                            <button type="submit" class="btn btn-sm btn-danger btn-delete">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(rapports)}">
+                    <td colspan="6" style="text-align:center;color:#999;">Aucun rapport trouvé.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

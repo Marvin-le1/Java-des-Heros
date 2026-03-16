@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Rapport #' + ${rapport.id} + ' — Java des Héros'">Détail rapport</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>📄 Rapport #<span th:text="${rapport.id}"></span></h1>
+        <div>
+            <a th:href="@{/rapports/{id}/modifier(id=${rapport.id})}" class="btn btn-primary"
+               sec:authorize="hasAnyAuthority('Gestionnaire Rapports','Maitre Supreme')">Modifier</a>
+            <a th:href="@{/rapports}" class="btn btn-secondary">← Retour</a>
+        </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}"   class="alert alert-error"   th:text="${error}"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;">
+
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>Informations</h2>
+            <table style="width:100%;margin-top:1rem;">
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;width:40%;">Mission</td>
+                    <td>
+                        <a th:if="${rapport.mission != null}"
+                           th:href="@{/missions/{id}(id=${rapport.mission.id})}"
+                           th:text="${rapport.mission.titre}"></a>
+                        <span th:if="${rapport.mission == null}" style="color:#999;">—</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;">Résultat</td>
+                    <td>
+                        <span th:if="${rapport.resultat != null}"
+                              th:text="${rapport.resultat}"
+                              th:classappend="${rapport.resultat.name() == 'succes'} ? 'badge-success' :
+                                            (${rapport.resultat.name() == 'echec_partiel'} ? 'badge-warning' : 'badge-danger')"
+                              class="badge"></span>
+                        <span th:if="${rapport.resultat == null}" class="badge badge-secondary">non renseigné</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;">Date rapport</td>
+                    <td th:text="${#temporals.format(rapport.dateRapport, 'dd/MM/yyyy HH:mm')}"></td>
+                </tr>
+                <tr th:if="${rapport.interlocuteurCivil != null}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Interlocuteur civil</td>
+                    <td>
+                        <a th:href="@{/civils/{id}(id=${rapport.interlocuteurCivil.id})}"
+                           th:text="${rapport.interlocuteurCivil.nomComplet}"></a>
+                    </td>
+                </tr>
+                <tr th:if="${rapport.interlocuteurHero != null}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Interlocuteur héros</td>
+                    <td>
+                        <a th:href="@{/superheros/{id}(id=${rapport.interlocuteurHero.id})}"
+                           th:text="${rapport.interlocuteurHero.nom}"></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+            <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <h2>🦹 Super-vilains identifiés</h2>
+                <div th:if="${rapport.supervilains.isEmpty()}" style="color:#999;margin-top:1rem;">
+                    Aucun super-vilain associé.
+                </div>
+                <ul th:if="${!rapport.supervilains.isEmpty()}" style="margin-top:1rem;padding-left:1.5rem;">
+                    <li th:each="vilain : ${rapport.supervilains}">
+                        <a th:href="@{/supervilains/{id}(id=${vilain.id})}" th:text="${vilain.nom}"></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <h2>🚨 Crises rattachées</h2>
+                <div th:if="${rapport.crises.isEmpty()}" style="color:#999;margin-top:1rem;">
+                    Aucune crise associée.
+                </div>
+                <ul th:if="${!rapport.crises.isEmpty()}" style="margin-top:1rem;padding-left:1.5rem;">
+                    <li th:each="crise : ${rapport.crises}">
+                        <a th:href="@{/crises/{id}(id=${crise.id})}" th:text="${crise.titre}"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${rapport.detailIntervention}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>📝 Détail intervention</h2>
+        <p th:text="${rapport.detailIntervention}" style="margin-top:0.75rem;white-space:pre-line;"></p>
+    </div>
+
+    <div th:if="${rapport.degats}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>💥 Dégâts</h2>
+        <p th:text="${rapport.degats}" style="margin-top:0.75rem;white-space:pre-line;"></p>
+    </div>
+
+    <div th:if="${rapport.commentaire}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>💬 Commentaire</h2>
+        <p th:text="${rapport.commentaire}" style="margin-top:0.75rem;white-space:pre-line;"></p>
+    </div>
+
+    <div th:if="${!rapport.nouveauxCivils.isEmpty()}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>👤 Nouveaux civils enregistrés</h2>
+        <div class="table-container" style="margin-top:0.75rem;">
+            <table>
+                <thead>
+                    <tr><th>Nom complet</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr th:each="civil : ${rapport.nouveauxCivils}">
+                        <td th:text="${civil.nomComplet}"></td>
+                        <td>
+                            <a th:href="@{/civils/{id}(id=${civil.id})}" class="btn btn-sm btn-secondary">Voir</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="margin-top:2rem;" sec:authorize="hasAuthority('Maitre Supreme')">
+        <form th:action="@{/rapports/{id}/supprimer(id=${rapport.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-delete">🗑️ Supprimer ce rapport</button>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

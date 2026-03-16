@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${isNew} ? 'Nouveau rapport' : 'Modifier rapport' + ' — Java des Héros'">Rapport</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1 th:text="${isNew} ? '📄 Nouveau rapport' : '✏️ Modifier le rapport'">Rapport</h1>
+        <a th:href="@{/rapports}" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="form-container">
+        <form th:action="@{/rapports/sauvegarder}" th:object="${rapport}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label for="missionId">Mission associée *</label>
+                <select id="missionId" name="missionId" class="form-control" required>
+                    <option value="">— Sélectionner une mission —</option>
+                    <option th:each="mission : ${missions}"
+                            th:value="${mission.id}"
+                            th:text="${mission.id + ' — ' + mission.titre}"
+                            th:selected="${(missionPreselect != null and missionPreselect == mission.id)
+                                        or (rapport.mission != null and rapport.mission.id == mission.id)}">
+                    </option>
+                </select>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                    <label for="interlocuteurCivilId">Interlocuteur civil</label>
+                    <select id="interlocuteurCivilId" name="interlocuteurCivilId" class="form-control">
+                        <option value="">— Aucun —</option>
+                        <option th:each="civil : ${civils}"
+                                th:value="${civil.id}"
+                                th:text="${civil.nomComplet}"
+                                th:selected="${rapport.interlocuteurCivil != null and rapport.interlocuteurCivil.id == civil.id}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="interlocuteurHeroId">Interlocuteur super-héros</label>
+                    <select id="interlocuteurHeroId" name="interlocuteurHeroId" class="form-control">
+                        <option value="">— Aucun —</option>
+                        <option th:each="hero : ${superheros}"
+                                th:value="${hero.id}"
+                                th:text="${hero.nom}"
+                                th:selected="${rapport.interlocuteurHero != null and rapport.interlocuteurHero.id == hero.id}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="resultat">Résultat</label>
+                <select id="resultat" th:field="*{resultat}" class="form-control">
+                    <option value="">— Non renseigné —</option>
+                    <option th:each="r : ${resultats}" th:value="${r}" th:text="${r}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="detailIntervention">Détail de l'intervention</label>
+                <textarea id="detailIntervention" th:field="*{detailIntervention}" class="form-control" rows="4"
+                          placeholder="Chronologie, actions menées, observations..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="degats">Dégâts constatés</label>
+                <textarea id="degats" th:field="*{degats}" class="form-control" rows="3"
+                          placeholder="Dégâts matériels, humains, environnementaux..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Super-vilains identifiés</label>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.5rem;
+                            border:1px solid #ddd;border-radius:6px;padding:1rem;max-height:200px;overflow-y:auto;">
+                    <label th:each="vilain : ${supervilains}" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                        <input type="checkbox" name="supervillainIds" th:value="${vilain.id}"
+                               th:checked="${rapport.supervilains != null and rapport.supervilains.contains(vilain)}">
+                        <span th:text="${vilain.nom}"></span>
+                    </label>
+                    <p th:if="${#lists.isEmpty(supervilains)}" style="color:#999;margin:0;">Aucun super-vilain disponible.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Nouveaux civils enregistrés</label>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.5rem;
+                            border:1px solid #ddd;border-radius:6px;padding:1rem;max-height:200px;overflow-y:auto;">
+                    <label th:each="civil : ${civils}" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                        <input type="checkbox" name="nouveauCivilIds" th:value="${civil.id}"
+                               th:checked="${rapport.nouveauxCivils != null and rapport.nouveauxCivils.contains(civil)}">
+                        <span th:text="${civil.nomComplet}"></span>
+                    </label>
+                    <p th:if="${#lists.isEmpty(civils)}" style="color:#999;margin:0;">Aucun civil disponible.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Crises rattachées</label>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.5rem;
+                            border:1px solid #ddd;border-radius:6px;padding:1rem;max-height:200px;overflow-y:auto;">
+                    <label th:each="crise : ${crises}" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                        <input type="checkbox" name="criseIds" th:value="${crise.id}"
+                               th:checked="${rapport.crises != null and rapport.crises.contains(crise)}">
+                        <span th:text="${crise.titre}"></span>
+                    </label>
+                    <p th:if="${#lists.isEmpty(crises)}" style="color:#999;margin:0;">Aucune crise disponible.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="commentaire">Commentaire</label>
+                <textarea id="commentaire" th:field="*{commentaire}" class="form-control" rows="3"
+                          placeholder="Notes internes, points de suivi..."></textarea>
+            </div>
+
+            <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                <a th:href="@{/rapports}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
