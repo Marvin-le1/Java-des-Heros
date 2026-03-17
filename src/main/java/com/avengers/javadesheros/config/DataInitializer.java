@@ -8,12 +8,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Initialise les données de base au démarrage (rôles, compte admin).
- * S'exécute uniquement si la BDD est vide.
+ * @Transactional garantit que les rôles restent managed quand on sauvegarde
+ * l'admin → Hibernate insère correctement dans utilisateur_role.
  */
 @Component
 @Order(1)
@@ -32,6 +34,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) {
         // Création des rôles si absents (noms alignés sur script SQL de P1)
         Role roleMaitre = creerRoleSiAbsent("Maitre Supreme",             "all");
@@ -52,7 +55,10 @@ public class DataInitializer implements CommandLineRunner {
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setEmail("admin@avengers.com");
-            admin.setRoles(Set.of(roleMaitre));
+            // HashSet mutable — Hibernate peut gérer la collection et insère dans utilisateur_role
+            HashSet<Role> roles = new HashSet<>();
+            roles.add(roleMaitre);
+            admin.setRoles(roles);
             utilisateurRepository.save(admin);
             System.out.println("✔ Compte admin créé (login: admin / mdp: admin123)");
         }
