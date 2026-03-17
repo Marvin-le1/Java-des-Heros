@@ -8,27 +8,7 @@
 </head>
 <body>
 
-<nav>
-    <div class="nav-brand"><a th:href="@{/dashboard}">⚡ Java des Héros</a></div>
-    <ul class="nav-links">
-        <li><a th:href="@{/civils}">Civils</a></li>
-        <li><a th:href="@{/organisations}">Organisations</a></li>
-        <li><a th:href="@{/superheros}">Super-héros</a></li>
-        <li><a th:href="@{/supervilains}">Super-vilains</a></li>
-        <li><a th:href="@{/incidents}">Incidents</a></li>
-        <li><a th:href="@{/missions}">Missions</a></li>
-        <li><a th:href="@{/rapports}">Rapports</a></li>
-        <li><a th:href="@{/satisfactions}">Satisfaction</a></li>
-        <li><a th:href="@{/crises}">Crises</a></li>
-        <li><a th:href="@{/litiges}">Litiges</a></li>
-    </ul>
-    <div class="nav-user">
-        <span>Bonjour, <strong sec:authentication="name">Utilisateur</strong></span>
-        <form th:action="@{/logout}" method="post" style="display:inline">
-            <button type="submit" class="btn btn-sm">Déconnexion</button>
-        </form>
-    </div>
-</nav>
+<nav th:replace="~{shared/nav :: nav}"></nav>
 
 <main class="dashboard">
     <h1>Tableau de bord</h1>
@@ -84,6 +64,12 @@
             <span class="card-icon">⚖️</span>
             <h3>Litiges</h3>
             <p>Dommages et intérêts</p>
+        </a>
+        <a th:href="@{/admin}" class="dashboard-card dashboard-card--admin"
+           sec:authorize="hasAuthority('Maitre Supreme')">
+            <span class="card-icon">⚙️</span>
+            <h3>Administration</h3>
+            <p>Gestion des utilisateurs</p>
         </a>
     </div>
 </main>
