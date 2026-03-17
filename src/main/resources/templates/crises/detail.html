@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${crise.titre} + ' — Java des Héros'">Crise</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>⚡ <span th:text="${crise.titre}"></span></h1>
+        <div>
+            <a th:href="@{/crises/{id}/modifier(id=${crise.id})}" class="btn btn-primary"
+               sec:authorize="hasAnyAuthority('Gestionnaire Crises','Maitre Supreme')">Modifier</a>
+            <a th:href="@{/crises}" class="btn btn-secondary">← Retour</a>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;">
+
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>Informations</h2>
+            <table style="width:100%;margin-top:1rem;">
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;width:40%;">Type</td>
+                    <td th:text="${crise.typeCrise}"></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;">Alerte</td>
+                    <td>
+                        <span th:text="${crise.niveauAlerte}"
+                              th:classappend="${crise.niveauAlerte.name() == 'critique'} ? 'badge-danger' :
+                                             (${crise.niveauAlerte.name() == 'eleve'} ? 'badge-warning' :
+                                             (${crise.niveauAlerte.name() == 'modere'} ? 'badge-info' : 'badge-secondary'))"
+                              class="badge"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;">Statut</td>
+                    <td>
+                        <span th:text="${crise.statut}"
+                              th:classappend="${crise.statut.name() == 'ouverte'} ? 'badge-danger' :
+                                             (${crise.statut.name() == 'en_cours'} ? 'badge-warning' : 'badge-success')"
+                              class="badge"></span>
+                    </td>
+                </tr>
+                <tr th:if="${crise.dateDeclaration}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Déclarée le</td>
+                    <td th:text="${#temporals.format(crise.dateDeclaration, 'dd/MM/yyyy HH:mm')}"></td>
+                </tr>
+                <tr th:if="${crise.mission}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Mission liée</td>
+                    <td>
+                        <a th:href="@{/missions/{id}(id=${crise.mission.id})}"
+                           th:text="${crise.mission.titre}"></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>🦸 Héros concernés (<span th:text="${crise.herosConcernes.size()}"></span>)</h2>
+            <div th:if="${crise.herosConcernes.isEmpty()}" style="color:#999;margin-top:1rem;">
+                Aucun héros concerné.
+            </div>
+            <ul th:if="${!crise.herosConcernes.isEmpty()}" style="margin-top:1rem;padding-left:1.5rem;">
+                <li th:each="h : ${crise.herosConcernes}">
+                    <a th:href="@{/superheros/{id}(id=${h.id})}" th:text="${h.nom}"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div th:if="${crise.description}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>📄 Description</h2>
+        <p th:text="${crise.description}" style="margin-top:0.75rem;white-space:pre-line;"></p>
+    </div>
+
+    <div style="margin-top:2rem;" sec:authorize="hasAuthority('Maitre Supreme')">
+        <form th:action="@{/crises/{id}/supprimer(id=${crise.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-delete">🗑️ Supprimer cette crise</button>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

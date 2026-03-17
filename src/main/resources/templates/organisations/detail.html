@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${organisation.nom} + ' — Java des Héros'">Organisation</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>🏢 <span th:text="${organisation.nom}"></span></h1>
+        <div>
+            <a th:href="@{/organisations/{id}/modifier(id=${organisation.id})}" class="btn btn-primary"
+               sec:authorize="hasAnyAuthority('Gestionnaire Organisations','Maitre Supreme')">Modifier</a>
+            <a th:href="@{/organisations}" class="btn btn-secondary">← Retour</a>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;">
+
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>Informations</h2>
+            <table style="width:100%;margin-top:1rem;">
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;width:40%;">Dirigeant</td>
+                    <td>
+                        <a th:if="${organisation.dirigeant != null}"
+                           th:href="@{/civils/{id}(id=${organisation.dirigeant.id})}"
+                           th:text="${organisation.dirigeant.nomComplet}"></a>
+                        <span th:if="${organisation.dirigeant == null}" style="color:#999;">—</span>
+                    </td>
+                </tr>
+                <tr th:if="${organisation.adresseSiege}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Siège</td>
+                    <td th:text="${organisation.adresseSiege}" style="white-space:pre-line;"></td>
+                </tr>
+                <tr th:if="${organisation.dateAjout}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Créée le</td>
+                    <td th:text="${#temporals.format(organisation.dateAjout, 'dd/MM/yyyy')}"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>👥 Membres (<span th:text="${organisation.membres.size()}"></span>)</h2>
+            <div th:if="${organisation.membres.isEmpty()}" style="color:#999;margin-top:1rem;">
+                Aucun membre enregistré.
+            </div>
+            <ul th:if="${!organisation.membres.isEmpty()}" style="margin-top:1rem;padding-left:1.5rem;">
+                <li th:each="m : ${organisation.membres}">
+                    <a th:href="@{/civils/{id}(id=${m.id})}" th:text="${m.nomComplet}"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div th:if="${organisation.commentaire}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>📝 Commentaire</h2>
+        <p th:text="${organisation.commentaire}" style="margin-top:0.75rem;white-space:pre-line;"></p>
+    </div>
+
+    <div style="margin-top:2rem;" sec:authorize="hasAuthority('Maitre Supreme')">
+        <form th:action="@{/organisations/{id}/supprimer(id=${organisation.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-delete">🗑️ Supprimer cette organisation</button>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

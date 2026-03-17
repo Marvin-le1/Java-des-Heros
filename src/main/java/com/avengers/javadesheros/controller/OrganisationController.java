@@ -41,7 +41,7 @@ public class OrganisationController {
 
     // ---- Formulaire ajout ----
     @GetMapping("/nouveau")
-    @PreAuthorize("hasAnyRole('ROLE_ORGANISATION','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Organisations','Maitre Supreme')")
     public String nouveauForm(Model model) {
         model.addAttribute("organisation", new Organisation());
         model.addAttribute("civils", civilRepository.findAll());
@@ -51,7 +51,7 @@ public class OrganisationController {
 
     // ---- Formulaire édition ----
     @GetMapping("/{id}/modifier")
-    @PreAuthorize("hasAnyRole('ROLE_ORGANISATION','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Organisations','Maitre Supreme')")
     public String modifierForm(@PathVariable Long id, Model model) {
         model.addAttribute("organisation", organisationService.findById(id));
         model.addAttribute("civils", civilRepository.findAll());
@@ -61,7 +61,7 @@ public class OrganisationController {
 
     // ---- Sauvegarder ----
     @PostMapping("/sauvegarder")
-    @PreAuthorize("hasAnyRole('ROLE_ORGANISATION','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Organisations','Maitre Supreme')")
     public String sauvegarder(@Valid @ModelAttribute("organisation") Organisation organisation,
                               BindingResult result,
                               @RequestParam(required = false) Long dirigeantId,
@@ -83,7 +83,7 @@ public class OrganisationController {
 
     // ---- Supprimer ----
     @PostMapping("/{id}/supprimer")
-    @PreAuthorize("hasRole('ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAuthority('Maitre Supreme')")
     public String supprimer(@PathVariable Long id, RedirectAttributes flash) {
         try {
             organisationService.deleteById(id);

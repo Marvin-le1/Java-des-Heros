@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapports — Java des Héros</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .stat-card .number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #e94560;
+            line-height: 1;
+        }
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.4rem;
+        }
+        .report-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        .report-section h2 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #e94560;
+            padding-bottom: 0.5rem;
+        }
+        .statut-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .statut-row:last-child { border-bottom: none; }
+        .big-score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #e94560;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .alert-box {
+            border-left: 4px solid #dc3545;
+            background: #fff5f5;
+            border-radius: 0 6px 6px 0;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .alert-box-warn {
+            border-left-color: #ffc107;
+            background: #fffdf0;
+        }
+    </style>
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>📊 Tableau de bord — Rapports</h1>
+    </div>
+
+    <!-- ====== Compteurs généraux ====== -->
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="number" th:text="${nbCivils}">0</div>
+            <div class="label">👤 Civils</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" th:text="${nbOrganisations}">0</div>
+            <div class="label">🏢 Organisations</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" th:text="${nbSuperheros}">0</div>
+            <div class="label">🦸 Super-héros</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" th:text="${nbSupervilains}">0</div>
+            <div class="label">🦹 Super-vilains</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" th:text="${nbMissions}">0</div>
+            <div class="label">🎯 Missions</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" th:text="${nbIncidents}">0</div>
+            <div class="label">🚨 Incidents</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" th:text="${nbCrises}">0</div>
+            <div class="label">⚡ Crises</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" th:text="${nbLitiges}">0</div>
+            <div class="label">⚖️ Litiges</div>
+        </div>
+    </div>
+
+    <!-- ====== Ligne principale ====== -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;">
+
+        <!-- Missions par statut -->
+        <div class="report-section">
+            <h2>🎯 Missions par statut</h2>
+            <div th:each="entry : ${missionsByStatut}" class="statut-row">
+                <span th:text="${entry.key}"></span>
+                <strong th:text="${entry.value}"></strong>
+            </div>
+            <div th:if="${missionsByStatut.isEmpty()}" style="color:#999;font-size:0.9rem;">
+                Aucune mission.
+            </div>
+        </div>
+
+        <!-- Incidents par statut -->
+        <div class="report-section">
+            <h2>🚨 Incidents par statut</h2>
+            <div th:each="entry : ${incidentsByStatut}" class="statut-row">
+                <span th:text="${entry.key}"></span>
+                <strong th:text="${entry.value}"></strong>
+            </div>
+            <div th:if="${incidentsByStatut.isEmpty()}" style="color:#999;font-size:0.9rem;">
+                Aucun incident.
+            </div>
+        </div>
+
+        <!-- Crises + Litiges -->
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+            <div class="report-section" style="margin-bottom:0;">
+                <h2>⚡ Crises par statut</h2>
+                <div th:each="entry : ${crisesByStatut}" class="statut-row">
+                    <span th:text="${entry.key}"></span>
+                    <strong th:text="${entry.value}"></strong>
+                </div>
+                <div th:if="${crisesByStatut.isEmpty()}" style="color:#999;font-size:0.9rem;">Aucune crise.</div>
+            </div>
+            <div class="report-section" style="margin-bottom:0;">
+                <h2>⚖️ Litiges par statut</h2>
+                <div th:each="entry : ${litigesByStatut}" class="statut-row">
+                    <span th:text="${entry.key}"></span>
+                    <strong th:text="${entry.value}"></strong>
+                </div>
+                <div th:if="${litigesByStatut.isEmpty()}" style="color:#999;font-size:0.9rem;">Aucun litige.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== Alertes actives ====== -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:1.5rem;">
+
+        <!-- Missions urgentes -->
+        <div class="report-section">
+            <h2>⚠️ Missions urgentes en cours</h2>
+            <div th:if="${missionsUrgentes.isEmpty()}" style="color:#28a745;font-size:0.9rem;">
+                ✅ Aucune mission urgente.
+            </div>
+            <div th:each="m : ${missionsUrgentes}" class="alert-box">
+                <a th:href="@{/missions/{id}(id=${m.id})}" th:text="${m.titre}"
+                   style="font-weight:600;color:#dc3545;text-decoration:none;"></a>
+                <div style="font-size:0.8rem;color:#666;margin-top:0.2rem;"
+                     th:text="${m.niveauUrgence + ' — ' + m.niveauGravite}"></div>
+            </div>
+        </div>
+
+        <!-- Incidents en attente -->
+        <div class="report-section">
+            <h2>🚨 Incidents en attente</h2>
+            <div th:if="${incidentsEnAttente.isEmpty()}" style="color:#28a745;font-size:0.9rem;">
+                ✅ Aucun incident en attente.
+            </div>
+            <div th:each="i : ${incidentsEnAttente}" class="alert-box alert-box-warn">
+                <a th:href="@{/incidents/{id}(id=${i.id})}" th:text="${i.titre}"
+                   style="font-weight:600;color:#856404;text-decoration:none;"></a>
+                <div style="font-size:0.8rem;color:#666;margin-top:0.2rem;"
+                     th:text="${i.lieu ?: 'Lieu non précisé'}"></div>
+            </div>
+        </div>
+
+        <!-- Crises ouvertes -->
+        <div class="report-section">
+            <h2>⚡ Crises ouvertes</h2>
+            <div th:if="${crisesOuvertes.isEmpty()}" style="color:#28a745;font-size:0.9rem;">
+                ✅ Aucune crise ouverte.
+            </div>
+            <div th:each="c : ${crisesOuvertes}" class="alert-box">
+                <a th:href="@{/crises/{id}(id=${c.id})}" th:text="${c.titre}"
+                   style="font-weight:600;color:#dc3545;text-decoration:none;"></a>
+                <div style="font-size:0.8rem;color:#666;margin-top:0.2rem;"
+                     th:text="${c.typeCrise + ' — alerte: ' + c.niveauAlerte}"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== Top héros + Satisfaction ====== -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;">
+
+        <!-- Top 10 héros -->
+        <div class="report-section">
+            <h2>🏆 Classement des héros</h2>
+            <div th:if="${topHeros.isEmpty()}" style="color:#999;font-size:0.9rem;">
+                Aucun héros enregistré.
+            </div>
+            <div th:each="hero, stat : ${topHeros}"
+                 style="display:flex;justify-content:space-between;align-items:center;
+                        padding:0.5rem 0;border-bottom:1px solid #f0f0f0;">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <span th:text="${stat.count}"
+                          style="background:#1a1a2e;color:white;width:24px;height:24px;
+                                 border-radius:50%;display:flex;align-items:center;
+                                 justify-content:center;font-size:0.75rem;font-weight:600;
+                                 flex-shrink:0;"></span>
+                    <a th:href="@{/superheros/{id}(id=${hero.id})}" th:text="${hero.nom}"
+                       style="font-weight:500;"></a>
+                </div>
+                <strong th:text="${#numbers.formatDecimal(hero.score, 1, 1)} + ' ⭐'"></strong>
+            </div>
+        </div>
+
+        <!-- Satisfaction -->
+        <div class="report-section">
+            <h2>⭐ Satisfaction globale</h2>
+            <div class="big-score" th:text="${#numbers.formatDecimal(avgSatisfaction, 1, 1)} + ' / 5'">— / 5</div>
+            <p style="text-align:center;color:#666;font-size:0.85rem;margin-bottom:1.5rem;">
+                Basé sur <span th:text="${nbEvaluations}"></span> évaluation(s)
+            </p>
+
+            <h3 style="font-size:0.95rem;margin-bottom:0.75rem;color:#2c3e50;">Dernières évaluations</h3>
+            <div th:if="${dernieresEvaluations.isEmpty()}" style="color:#999;font-size:0.9rem;">
+                Aucune évaluation.
+            </div>
+            <div th:each="s : ${dernieresEvaluations}"
+                 style="display:flex;justify-content:space-between;align-items:center;
+                        padding:0.4rem 0;border-bottom:1px solid #f0f0f0;font-size:0.9rem;">
+                <div>
+                    <a th:href="@{/missions/{id}(id=${s.mission.id})}" th:text="${#strings.abbreviate(s.mission.titre, 35)}"
+                       style="font-weight:500;"></a>
+                    <div style="color:#999;font-size:0.8rem;"
+                         th:text="${s.civil != null ? s.civil.nomComplet : 'Anonyme'}"></div>
+                </div>
+                <strong th:text="${#numbers.formatDecimal(s.note, 1, 1)} + '/5'"></strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== Litiges ouverts ====== -->
+    <div th:if="${!litigesOuverts.isEmpty()}" class="report-section" style="margin-top:1.5rem;">
+        <h2>⚖️ Litiges ouverts</h2>
+        <div class="table-container" style="margin-top:0.75rem;">
+            <table>
+                <thead>
+                    <tr><th>Titre</th><th>Type</th><th>Plaignant</th><th>Héros</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    <tr th:each="l : ${litigesOuverts}">
+                        <td th:text="${l.titre}"></td>
+                        <td th:text="${l.typeLitige}"></td>
+                        <td th:text="${l.plaignant != null ? l.plaignant.nomComplet : '—'}"></td>
+                        <td th:text="${l.superhero != null ? l.superhero.nom : '—'}"></td>
+                        <td>
+                            <a th:href="@{/litiges/{id}(id=${l.id})}" class="btn btn-sm btn-secondary">Voir</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

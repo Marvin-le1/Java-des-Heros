@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${litige.titre} + ' — Java des Héros'">Litige</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>⚖️ <span th:text="${litige.titre}"></span></h1>
+        <div>
+            <a th:href="@{/litiges/{id}/modifier(id=${litige.id})}" class="btn btn-primary"
+               sec:authorize="hasAnyAuthority('Gestionnaire Litiges','Maitre Supreme')">Modifier</a>
+            <a th:href="@{/litiges}" class="btn btn-secondary">← Retour</a>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;">
+
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>Informations</h2>
+            <table style="width:100%;margin-top:1rem;">
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;width:40%;">Type</td>
+                    <td th:text="${litige.typeLitige}"></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;">Statut</td>
+                    <td>
+                        <span th:text="${litige.statut}"
+                              th:classappend="${litige.statut.name() == 'ouvert'} ? 'badge-danger' :
+                                             (${litige.statut.name() == 'en_instruction'} ? 'badge-warning' :
+                                             (${litige.statut.name() == 'resolu'} ? 'badge-success' : 'badge-secondary'))"
+                              class="badge"></span>
+                    </td>
+                </tr>
+                <tr th:if="${litige.dateOuverture}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Ouvert le</td>
+                    <td th:text="${#temporals.format(litige.dateOuverture, 'dd/MM/yyyy')}"></td>
+                </tr>
+                <tr th:if="${litige.dateCloture}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Clôturé le</td>
+                    <td th:text="${#temporals.format(litige.dateCloture, 'dd/MM/yyyy')}"></td>
+                </tr>
+                <tr th:if="${litige.mission}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Mission liée</td>
+                    <td>
+                        <a th:href="@{/missions/{id}(id=${litige.mission.id})}"
+                           th:text="${litige.mission.titre}"></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>Parties impliquées</h2>
+            <table style="width:100%;margin-top:1rem;">
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;width:40%;">Plaignant</td>
+                    <td>
+                        <a th:if="${litige.plaignant != null}"
+                           th:href="@{/civils/{id}(id=${litige.plaignant.id})}"
+                           th:text="${litige.plaignant.nomComplet}"></a>
+                        <span th:if="${litige.plaignant == null}" style="color:#999;">—</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;">Héros mis en cause</td>
+                    <td>
+                        <a th:if="${litige.superhero != null}"
+                           th:href="@{/superheros/{id}(id=${litige.superhero.id})}"
+                           th:text="${litige.superhero.nom}"></a>
+                        <span th:if="${litige.superhero == null}" style="color:#999;">—</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${litige.description}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>📄 Description</h2>
+        <p th:text="${litige.description}" style="margin-top:0.75rem;white-space:pre-line;"></p>
+    </div>
+
+    <div th:if="${litige.resolution}"
+         style="background:#d4edda;border-radius:8px;padding:1.5rem;border:1px solid #c3e6cb;margin-top:1.5rem;">
+        <h2>✅ Résolution</h2>
+        <p th:text="${litige.resolution}" style="margin-top:0.75rem;white-space:pre-line;"></p>
+    </div>
+
+    <div style="margin-top:2rem;" sec:authorize="hasAuthority('Maitre Supreme')">
+        <form th:action="@{/litiges/{id}/supprimer(id=${litige.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-delete">🗑️ Supprimer ce litige</button>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

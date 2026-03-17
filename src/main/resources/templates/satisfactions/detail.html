@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Évaluation #<span th:text="${satisfaction.id}"></span> — Java des Héros</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>⭐ Évaluation #<span th:text="${satisfaction.id}"></span></h1>
+        <a th:href="@{/satisfactions}" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1rem;">
+        <table style="width:100%;">
+            <tr>
+                <td style="font-weight:600;padding:0.5rem 0;width:30%;">Mission</td>
+                <td>
+                    <a th:href="@{/missions/{id}(id=${satisfaction.mission.id})}"
+                       th:text="${satisfaction.mission.titre}"></a>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:600;padding:0.5rem 0;">Évalué par</td>
+                <td>
+                    <a th:if="${satisfaction.civil != null}"
+                       th:href="@{/civils/{id}(id=${satisfaction.civil.id})}"
+                       th:text="${satisfaction.civil.nomComplet}"></a>
+                    <span th:if="${satisfaction.civil == null}" style="color:#999;">Anonyme</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:600;padding:0.5rem 0;">Note</td>
+                <td>
+                    <strong style="font-size:1.5rem;" th:text="${#numbers.formatDecimal(satisfaction.note, 1, 1)}"></strong>
+                    <span style="color:#666;"> / 5.0</span>
+                </td>
+            </tr>
+            <tr th:if="${satisfaction.dateEvaluation}">
+                <td style="font-weight:600;padding:0.5rem 0;">Date</td>
+                <td th:text="${#temporals.format(satisfaction.dateEvaluation, 'dd/MM/yyyy HH:mm')}"></td>
+            </tr>
+        </table>
+
+        <div th:if="${satisfaction.commentaire}" style="margin-top:1.5rem;">
+            <h3>💬 Commentaire</h3>
+            <p th:text="${satisfaction.commentaire}" style="margin-top:0.5rem;white-space:pre-line;color:#444;"></p>
+        </div>
+    </div>
+
+    <div style="margin-top:2rem;" sec:authorize="hasAuthority('Maitre Supreme')">
+        <form th:action="@{/satisfactions/{id}/supprimer(id=${satisfaction.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-delete">🗑️ Supprimer cette évaluation</button>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

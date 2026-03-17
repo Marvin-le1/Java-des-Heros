@@ -49,7 +49,7 @@ public class IncidentController {
 
     // ---- Formulaire ajout ----
     @GetMapping("/nouveau")
-    @PreAuthorize("hasAnyRole('ROLE_INCIDENT','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Incidents','Maitre Supreme')")
     public String nouveauForm(Model model) {
         model.addAttribute("incident", new Incident());
         populateFormModel(model);
@@ -59,7 +59,7 @@ public class IncidentController {
 
     // ---- Formulaire édition ----
     @GetMapping("/{id}/modifier")
-    @PreAuthorize("hasAnyRole('ROLE_INCIDENT','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Incidents','Maitre Supreme')")
     public String modifierForm(@PathVariable Long id, Model model) {
         model.addAttribute("incident", incidentService.findById(id));
         populateFormModel(model);
@@ -69,7 +69,7 @@ public class IncidentController {
 
     // ---- Sauvegarder ----
     @PostMapping("/sauvegarder")
-    @PreAuthorize("hasAnyRole('ROLE_INCIDENT','ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAnyAuthority('Gestionnaire Incidents','Maitre Supreme')")
     public String sauvegarder(@Valid @ModelAttribute("incident") Incident incident,
                               BindingResult result,
                               @RequestParam(required = false) Long declarantCivilId,
@@ -93,7 +93,7 @@ public class IncidentController {
 
     // ---- Supprimer ----
     @PostMapping("/{id}/supprimer")
-    @PreAuthorize("hasRole('ROLE_MAITRE_SUPREME')")
+    @PreAuthorize("hasAuthority('Maitre Supreme')")
     public String supprimer(@PathVariable Long id, RedirectAttributes flash) {
         try {
             incidentService.deleteById(id);

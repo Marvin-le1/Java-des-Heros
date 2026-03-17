@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${incident.titre} + ' — Java des Héros'">Incident</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{shared/nav :: nav}"></nav>
+
+<main>
+    <div class="actions-bar">
+        <h1>🚨 <span th:text="${incident.titre}"></span></h1>
+        <div>
+            <a th:href="@{/missions/nouvelle(incidentId=${incident.id})}" class="btn btn-primary"
+               th:if="${incident.statut.name() == 'en_attente'}"
+               sec:authorize="hasAnyAuthority('Gestionnaire Missions','Maitre Supreme')">
+                🎯 Transformer en mission
+            </a>
+            <a th:href="@{/incidents/{id}/modifier(id=${incident.id})}" class="btn btn-secondary"
+               sec:authorize="hasAnyAuthority('Gestionnaire Incidents','Maitre Supreme')">Modifier</a>
+            <a th:href="@{/incidents}" class="btn btn-secondary">← Retour</a>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;">
+
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>Informations</h2>
+            <table style="width:100%;margin-top:1rem;">
+                <tr>
+                    <td style="font-weight:600;padding:0.4rem 0;width:40%;">Statut</td>
+                    <td>
+                        <span th:text="${incident.statut}"
+                              th:classappend="${incident.statut.name() == 'en_attente'} ? 'badge-warning' :
+                                             (${incident.statut.name() == 'transforme_en_mission'} ? 'badge-success' : 'badge-secondary')"
+                              class="badge"></span>
+                    </td>
+                </tr>
+                <tr th:if="${incident.lieu}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Lieu</td>
+                    <td th:text="${incident.lieu}"></td>
+                </tr>
+                <tr th:if="${incident.dateDeclaration}">
+                    <td style="font-weight:600;padding:0.4rem 0;">Déclaré le</td>
+                    <td th:text="${#temporals.format(incident.dateDeclaration, 'dd/MM/yyyy HH:mm')}"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h2>Déclarant</h2>
+            <div style="margin-top:1rem;">
+                <div th:if="${incident.declarantCivil != null}">
+                    <p><strong>Civil :</strong>
+                        <a th:href="@{/civils/{id}(id=${incident.declarantCivil.id})}"
+                           th:text="${incident.declarantCivil.nomComplet}"></a>
+                    </p>
+                </div>
+                <div th:if="${incident.declarantOrganisation != null}">
+                    <p><strong>Organisation :</strong>
+                        <a th:href="@{/organisations/{id}(id=${incident.declarantOrganisation.id})}"
+                           th:text="${incident.declarantOrganisation.nom}"></a>
+                    </p>
+                </div>
+                <div th:if="${incident.declarantHero != null}">
+                    <p><strong>Super-héros :</strong>
+                        <a th:href="@{/superheros/{id}(id=${incident.declarantHero.id})}"
+                           th:text="${incident.declarantHero.nom}"></a>
+                    </p>
+                </div>
+                <p th:if="${incident.declarantCivil == null and incident.declarantOrganisation == null and incident.declarantHero == null}"
+                   style="color:#999;">Déclarant anonyme</p>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${incident.description}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>📄 Description</h2>
+        <p th:text="${incident.description}" style="margin-top:0.75rem;white-space:pre-line;"></p>
+    </div>
+
+    <div th:if="${incident.commentaire}"
+         style="background:white;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-top:1.5rem;">
+        <h2>📝 Commentaire interne</h2>
+        <p th:text="${incident.commentaire}" style="margin-top:0.75rem;white-space:pre-line;"></p>
+    </div>
+
+    <div style="margin-top:2rem;" sec:authorize="hasAuthority('Maitre Supreme')">
+        <form th:action="@{/incidents/{id}/supprimer(id=${incident.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-delete">🗑️ Supprimer cet incident</button>
+        </form>
+    </div>
+</main>
+
+<footer><p>Java des Héros — CRM Avengers | INFDIET10</p></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
