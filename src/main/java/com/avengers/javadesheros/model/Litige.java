@@ -35,11 +35,11 @@ public class Litige {
     private String titre;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type_litige", nullable = false)
+    @Column(name = "type_litige", nullable = false, columnDefinition = "varchar(50)")
     private TypeLitige typeLitige = TypeLitige.autre;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(50)")
     private Statut statut = Statut.ouvert;
 
     /** Mission à l'origine du litige (optionnel) */

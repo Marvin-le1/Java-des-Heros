@@ -36,7 +36,7 @@ public class Incident {
     private String lieu;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(50)")
     private Statut statut = Statut.en_attente;
 
     // Déclarant civil (optionnel)

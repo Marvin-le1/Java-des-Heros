@@ -43,7 +43,7 @@ public class Rapport {
     private String detailIntervention;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "resultat")
+    @Column(name = "resultat", columnDefinition = "varchar(50)")
     private Resultat resultat;
 
     @Column(columnDefinition = "TEXT")

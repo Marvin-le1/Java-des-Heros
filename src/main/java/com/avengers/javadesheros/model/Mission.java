@@ -42,7 +42,7 @@ public class Mission {
     private String titre;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(50)")
     private Nature nature = Nature.sauvetage;
 
     /** Incident à l'origine de la mission (optionnel) */
@@ -60,18 +60,18 @@ public class Mission {
     private String itineraire;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "niveau_gravite", nullable = false)
+    @Column(name = "niveau_gravite", nullable = false, columnDefinition = "varchar(50)")
     private NiveauGravite niveauGravite = NiveauGravite.insignifiant;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "niveau_urgence", nullable = false)
+    @Column(name = "niveau_urgence", nullable = false, columnDefinition = "varchar(50)")
     private NiveauUrgence niveauUrgence = NiveauUrgence.normal;
 
     @Column(name = "infos_complementaires", columnDefinition = "TEXT")
     private String infosComplementaires;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(50)")
     private Statut statut = Statut.planifiee;
 
     /** Super-héros affectés à la mission */

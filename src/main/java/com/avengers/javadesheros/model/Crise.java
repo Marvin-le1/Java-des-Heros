@@ -40,7 +40,7 @@ public class Crise {
     private String titre;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type_crise", nullable = false)
+    @Column(name = "type_crise", nullable = false, columnDefinition = "varchar(50)")
     private TypeCrise typeCrise = TypeCrise.autre;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,14 +51,14 @@ public class Crise {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "niveau_alerte", nullable = false)
+    @Column(name = "niveau_alerte", nullable = false, columnDefinition = "varchar(50)")
     private NiveauAlerte niveauAlerte = NiveauAlerte.modere;
 
     @Column(name = "date_declaration", updatable = false)
     private LocalDateTime dateDeclaration = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(50)")
     private Statut statut = Statut.ouverte;
 
     @ManyToMany(fetch = FetchType.LAZY)
