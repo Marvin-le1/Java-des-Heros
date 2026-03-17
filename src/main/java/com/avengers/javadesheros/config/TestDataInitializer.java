@@ -62,20 +62,20 @@ public class TestDataInitializer implements CommandLineRunner {
         // ─────────────────────────────────────────────
         // 1. CIVILS
         // ─────────────────────────────────────────────
-        Civil tony    = civil("Stark",    "Tony",    "M.",  "10880 Malibu Point, Malibu CA",   "tony@starkindustries.com", "1970-05-29");
-        Civil steve   = civil("Rogers",   "Steve",   "M.",  "569 Leaman Place, Brooklyn NY",   "steve.rogers@shield.gov",  "1918-07-04");
-        Civil bruce   = civil("Banner",   "Bruce",   "M.",  "New York, NY",                    "b.banner@science.edu",     "1969-12-18");
-        Civil natasha = civil("Romanoff", "Natasha", "Mme", "Moscou / New York",               "black.widow@shield.gov",   "1984-11-22");
-        Civil clint   = civil("Barton",   "Clint",   "M.",  "Waverly, Iowa",                   "hawkeye@avengers.com",     "1971-01-07");
-        Civil scott   = civil("Lang",     "Scott",   "M.",  "San Francisco, CA",               "scott.lang@xcon.com",      "1972-04-08");
-        Civil wanda   = civil("Maximoff", "Wanda",   "Mme", "Sokovia",                         "wanda@avengers.com",       "1989-02-10");
-        Civil peter   = civil("Parker",   "Peter",   "M.",  "20 Ingram Street, Queens NY",     "peter.parker@midtown.edu", "2001-08-10");
-        Civil nick    = civil("Fury",     "Nick",    "M.",  "Washington D.C.",                  "n.fury@shield.gov",        "1950-09-23");
-        Civil maria   = civil("Hill",     "Maria",   "Mme", "Washington D.C.",                  "m.hill@shield.gov",        "1982-04-04");
-        Civil thor    = civil("Odinson",  "Thor",    "M.",  "Asgard / New Asgard, Norvège",    "thor@asgard.com",          "0964-11-10");
-        Civil vision  = civil("Vision",   "Vision",  "M.",  "Wandavision, NJ",                 "vision@avengers.com",      "2015-05-01");
-        Civil loki    = civil("Laufeyson","Loki",    "M.",  "Asgard",                          "loki@asgard.com",          "0965-12-17");
-        Civil pepper  = civil("Potts",    "Pepper",  "Mme", "10880 Malibu Point, Malibu CA",   "pepper@starkindustries.com","1974-05-28");
+        Civil tony    = civil("Stark",    "Tony",    "M.",  "10880 Malibu Point, Malibu CA",  "tony@starkindustries.com",  "1970-05-29", "+1 310-555-0100", "Américaine");
+        Civil steve   = civil("Rogers",   "Steve",   "M.",  "569 Leaman Place, Brooklyn NY",  "steve.rogers@shield.gov",   "1918-07-04", "+1 718-555-0101", "Américaine");
+        Civil bruce   = civil("Banner",   "Bruce",   "M.",  "New York, NY",                   "b.banner@science.edu",      "1969-12-18", "+1 212-555-0102", "Américaine");
+        Civil natasha = civil("Romanoff", "Natasha", "Mme", "Moscou / New York",              "black.widow@shield.gov",    "1984-11-22", "+7 495-555-0103", "Russe");
+        Civil clint   = civil("Barton",   "Clint",   "M.",  "Waverly, Iowa",                  "hawkeye@avengers.com",      "1971-01-07", "+1 515-555-0104", "Américaine");
+        Civil scott   = civil("Lang",     "Scott",   "M.",  "San Francisco, CA",              "scott.lang@xcon.com",       "1972-04-08", "+1 415-555-0105", "Américaine");
+        Civil wanda   = civil("Maximoff", "Wanda",   "Mme", "Sokovia",                        "wanda@avengers.com",        "1989-02-10", "+421 555-0106",   "Sokovienne");
+        Civil peter   = civil("Parker",   "Peter",   "M.",  "20 Ingram Street, Queens NY",    "peter.parker@midtown.edu",  "2001-08-10", "+1 718-555-0107", "Américaine");
+        Civil nick    = civil("Fury",     "Nick",    "M.",  "Washington D.C.",                "n.fury@shield.gov",         "1950-09-23", "+1 202-555-0108", "Américaine");
+        Civil maria   = civil("Hill",     "Maria",   "Mme", "Washington D.C.",                "m.hill@shield.gov",         "1982-04-04", "+1 202-555-0109", "Américaine");
+        Civil thor    = civil("Odinson",  "Thor",    "M.",  "Asgard / New Asgard, Norvège",   "thor@asgard.com",           "0964-11-10", "+47 555-0110",    "Asgardienne");
+        Civil vision  = civil("Vision",   "Vision",  "M.",  "Wandavision, NJ",                "vision@avengers.com",       "2015-05-01", null,              "Synthézoïde");
+        Civil loki    = civil("Laufeyson","Loki",    "M.",  "Asgard",                         "loki@asgard.com",           "0965-12-17", null,              "Asgardienne");
+        Civil pepper  = civil("Potts",    "Pepper",  "Mme", "10880 Malibu Point, Malibu CA",  "pepper@starkindustries.com","1974-05-28", "+1 310-555-0111", "Américaine");
 
         // ─────────────────────────────────────────────
         // 2. ORGANISATIONS
@@ -265,7 +265,8 @@ public class TestDataInitializer implements CommandLineRunner {
     // ──────────────────────────────────────────────────────────────
 
     private Civil civil(String nom, String prenom, String civilite,
-                        String adresse, String email, String naissance) {
+                        String adresse, String email, String naissance,
+                        String telephone, String nationalite) {
         Civil c = new Civil();
         c.setNom(nom);
         c.setPrenom(prenom);
@@ -273,6 +274,8 @@ public class TestDataInitializer implements CommandLineRunner {
         c.setAdressePostale(adresse);
         c.setEmail(email);
         c.setDateNaissance(LocalDate.parse(naissance));
+        c.setTelephone(telephone);
+        c.setNationalite(nationalite);
         return civilRepo.save(c);
     }
 
