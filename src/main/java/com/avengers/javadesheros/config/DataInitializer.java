@@ -5,6 +5,7 @@ import com.avengers.javadesheros.model.Utilisateur;
 import com.avengers.javadesheros.repository.RoleRepository;
 import com.avengers.javadesheros.repository.UtilisateurRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.util.Set;
  * S'exécute uniquement si la BDD est vide.
  */
 @Component
+@Order(1)
 public class DataInitializer implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
