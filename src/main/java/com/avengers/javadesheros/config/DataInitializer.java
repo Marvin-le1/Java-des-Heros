@@ -50,17 +50,22 @@ public class DataInitializer implements CommandLineRunner {
         creerRoleSiAbsent("Gestionnaire Litiges",       "litiges");
 
         // Compte admin par défaut
-        if (!utilisateurRepository.existsByUsername("admin")) {
-            Utilisateur admin = new Utilisateur();
+        Utilisateur admin = utilisateurRepository.findByUsername("admin").orElse(null);
+        if (admin == null) {
+            // Premier démarrage : création complète
+            admin = new Utilisateur();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setEmail("admin@avengers.com");
-            // HashSet mutable — Hibernate peut gérer la collection et insère dans utilisateur_role
-            HashSet<Role> roles = new HashSet<>();
-            roles.add(roleMaitre);
-            admin.setRoles(roles);
+            admin.setRoles(new HashSet<>());
+            admin.getRoles().add(roleMaitre);
             utilisateurRepository.save(admin);
             System.out.println("✔ Compte admin créé (login: admin / mdp: admin123)");
+        } else if (admin.getRoles().isEmpty()) {
+            // Admin existe mais sans rôle (ancienne version sans @Transactional)
+            admin.getRoles().add(roleMaitre);
+            utilisateurRepository.save(admin);
+            System.out.println("✔ Rôle Maitre Supreme ajouté au compte admin existant");
         }
 
         System.out.println("✔ Initialisation de la base de données terminée.");
